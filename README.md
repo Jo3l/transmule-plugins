@@ -88,4 +88,4 @@ Pull requests welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## License
 
-MIT
+GPL-3.0 — Copyright (C) 2026 Quique Ferrando
