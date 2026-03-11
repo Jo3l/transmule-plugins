@@ -6,7 +6,7 @@
  */
 export default {
   meta: {
-    id: "yts",
+    id: "yts-search",
     name: "YTS",
     icon: "mdi-filmstrip",
     pluginType: "torrent-search",
