@@ -4,10 +4,10 @@ Official plugin collection for [TransMule](https://github.com/Jo3l/transmule) �
 
 Plugins extend TransMule in two ways:
 
-| Type | What it does | Key method |
-|------|-------------|------------|
-| **Media** (`mediaType`) | Adds a sidebar browse/search section for a content type (movies, shows, …) | `list(params)` |
-| **Torrent Search** (`pluginType: "torrent-search"`) | Powers the Transmission → Torrent Search page with a new index source | `search(query, limit, extraTrackers)` |
+| Type                                                | What it does                                                               | Key method                            |
+| --------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------- |
+| **Media** (`mediaType`)                             | Adds a sidebar browse/search section for a content type (movies, shows, …) | `list(params)`                        |
+| **Torrent Search** (`pluginType: "torrent-search"`) | Powers the Transmission → Torrent Search page with a new index source      | `search(query, limit, extraTrackers)` |
 
 Upload any `.js` file via **Settings → Providers → Upload Plugin** — no server restart needed.
 
@@ -17,20 +17,20 @@ Upload any `.js` file via **Settings → Providers → Upload Plugin** — no se
 
 ### Media providers
 
-| File | ID | Name | Type | Description |
-|------|----|------|------|-------------|
-| [media/dontorrent-movies.js](media/dontorrent-movies.js) | `dontorrent-movies` | DonTorrent | `movies` | Spanish movie torrents from dontorrent.link |
-| [media/dontorrent-shows.js](media/dontorrent-shows.js) | `dontorrent-shows` | DonTorrent | `shows` | Spanish series torrents from dontorrent.link |
-| [media/yts.js](media/yts.js) | `yts` | YTS | `movies` | Movie browse/search via YTS.mx with quality & genre filters |
-| [media/showrss.js](media/showrss.js) | `showrss` | ShowRSS | `shows` | TV show torrents from your personal ShowRSS RSS feed |
+| File                                                     | ID                  | Name       | Type     | Description                                                 |
+| -------------------------------------------------------- | ------------------- | ---------- | -------- | ----------------------------------------------------------- |
+| [media/dontorrent-movies.js](media/dontorrent-movies.js) | `dontorrent-movies` | DonTorrent | `movies` | Spanish movie torrents from dontorrent.link                 |
+| [media/dontorrent-shows.js](media/dontorrent-shows.js)   | `dontorrent-shows`  | DonTorrent | `shows`  | Spanish series torrents from dontorrent.link                |
+| [media/yts.js](media/yts.js)                             | `yts`               | YTS        | `movies` | Movie browse/search via YTS.mx with quality & genre filters |
+| [media/showrss.js](media/showrss.js)                     | `showrss`           | ShowRSS    | `shows`  | TV show torrents from your personal ShowRSS RSS feed        |
 
 ### Torrent-search providers
 
-| File | ID | Name | Description |
-|------|----|------|-------------|
-| [torrent-search/nyaa.js](torrent-search/nyaa.js) | `nyaa` | Nyaa | Anime & manga torrents via nyaa.si RSS |
-| [torrent-search/piratebay.js](torrent-search/piratebay.js) | `tpb` | The Pirate Bay | General torrents via apibay.org JSON API |
-| [torrent-search/yts-search.js](torrent-search/yts-search.js) | `yts` | YTS | Movie torrents via YTS.mx JSON API |
+| File                                                         | ID     | Name           | Description                              |
+| ------------------------------------------------------------ | ------ | -------------- | ---------------------------------------- |
+| [torrent-search/nyaa.js](torrent-search/nyaa.js)             | `nyaa` | Nyaa           | Anime & manga torrents via nyaa.si RSS   |
+| [torrent-search/piratebay.js](torrent-search/piratebay.js)   | `tpb`  | The Pirate Bay | General torrents via apibay.org JSON API |
+| [torrent-search/yts-search.js](torrent-search/yts-search.js) | `yts`  | YTS            | Movie torrents via YTS.mx JSON API       |
 
 ---
 

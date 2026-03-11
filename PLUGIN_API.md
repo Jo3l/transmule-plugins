@@ -3,6 +3,7 @@
 TransMule plugins are plain `.js` files uploaded via **Settings → Providers → Upload Plugin**.
 
 Two plugin types are supported:
+
 - **Media plugins** — add a browsable/searchable content section to the sidebar
 - **Torrent-search plugins** — add a source to the Transmission → Torrent Search page
 
@@ -44,13 +45,13 @@ export default {
 
 ### `meta` object
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `id` | `string` | ✅ | Unique lowercase kebab-case identifier. Must not clash with other loaded plugins. |
-| `name` | `string` | ✅ | Display name shown in the UI. |
-| `icon` | `string` | ✅ | MDI icon class, e.g. `"mdi-movie"`. Browse icons at [Pictogrammers](https://pictogrammers.com/library/mdi/). |
-| `mediaType` | `string` | ✅ | Content category (e.g. `"movies"`, `"shows"`). Each unique value gets its own collapsible sidebar section. |
-| `description` | `string` | — | Short text shown in Settings → Providers. |
+| Field         | Type     | Required | Description                                                                                                  |
+| ------------- | -------- | -------- | ------------------------------------------------------------------------------------------------------------ |
+| `id`          | `string` | ✅       | Unique lowercase kebab-case identifier. Must not clash with other loaded plugins.                            |
+| `name`        | `string` | ✅       | Display name shown in the UI.                                                                                |
+| `icon`        | `string` | ✅       | MDI icon class, e.g. `"mdi-movie"`. Browse icons at [Pictogrammers](https://pictogrammers.com/library/mdi/). |
+| `mediaType`   | `string` | ✅       | Content category (e.g. `"movies"`, `"shows"`). Each unique value gets its own collapsible sidebar section.   |
+| `description` | `string` | —        | Short text shown in Settings → Providers.                                                                    |
 
 ### `list(params)` — required
 
@@ -60,11 +61,11 @@ Called on every search/browse action.
 async list({ query, page, filters }) { … }
 ```
 
-| Param | Type | Description |
-|-------|------|-------------|
-| `query` | `string` | User's search query (may be empty for browse). |
-| `page` | `number` | 1-based page number. |
-| `filters` | `Record<string, string>` | Values from any declared `filters`. |
+| Param     | Type                     | Description                                    |
+| --------- | ------------------------ | ---------------------------------------------- |
+| `query`   | `string`                 | User's search query (may be empty for browse). |
+| `page`    | `number`                 | 1-based page number.                           |
+| `filters` | `Record<string, string>` | Values from any declared `filters`.            |
 
 **Return value:**
 
@@ -200,7 +201,7 @@ export default {
       seeders: r.seeders ?? 0,
       leechers: r.leechers ?? 0,
       uploadedAt: r.date ?? null,
-      source: "my-index",   // should match meta.id
+      source: "my-index", // should match meta.id
       category: r.category ?? null,
     }));
   },
@@ -209,13 +210,13 @@ export default {
 
 ### `meta` object
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `id` | `string` | ✅ | Unique lowercase id. Appears in the source dropdown of Torrent Search. |
-| `name` | `string` | ✅ | Display name in the source dropdown. |
-| `icon` | `string` | ✅ | MDI icon class. |
-| `pluginType` | `"torrent-search"` | ✅ | Must be exactly `"torrent-search"`. |
-| `description` | `string` | — | Shown in Settings → Providers. |
+| Field         | Type               | Required | Description                                                            |
+| ------------- | ------------------ | -------- | ---------------------------------------------------------------------- |
+| `id`          | `string`           | ✅       | Unique lowercase id. Appears in the source dropdown of Torrent Search. |
+| `name`        | `string`           | ✅       | Display name in the source dropdown.                                   |
+| `icon`        | `string`           | ✅       | MDI icon class.                                                        |
+| `pluginType`  | `"torrent-search"` | ✅       | Must be exactly `"torrent-search"`.                                    |
+| `description` | `string`           | —        | Shown in Settings → Providers.                                         |
 
 ### `search(query, limit, extraTrackers)` — required
 
@@ -223,10 +224,10 @@ export default {
 async search(query, limit, extraTrackers) { … }
 ```
 
-| Param | Type | Description |
-|-------|------|-------------|
-| `query` | `string` | Search term entered by the user. |
-| `limit` | `number` | Maximum number of results to return. |
+| Param           | Type     | Description                                                                                                |
+| --------------- | -------- | ---------------------------------------------------------------------------------------------------------- |
+| `query`         | `string` | Search term entered by the user.                                                                           |
+| `limit`         | `number` | Maximum number of results to return.                                                                       |
 | `extraTrackers` | `string` | Pre-encoded tracker params to append to magnet links, e.g. `"&tr=udp%3A%2F%2Ftracker.example.com%3A1337"`. |
 
 **Return value:** `TorrentSearchResult[]`

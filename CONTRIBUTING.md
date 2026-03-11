@@ -38,6 +38,7 @@ If a source changes its URL or response format, open a PR updating the relevant 
 ## Reporting broken plugins
 
 Open an issue with:
+
 - Plugin name / filename
 - Error message or symptoms
 - When it stopped working (if known)
