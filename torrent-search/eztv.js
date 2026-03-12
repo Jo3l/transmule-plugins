@@ -23,7 +23,8 @@ export default {
     pluginType: "torrent-search",
     description: "TV show torrents from EZTV (eztvx.to).",
     version: "1.0.0",
-    repository: "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/manifest.json",
+    repository:
+      "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/manifest.json",
   },
 
   async search(query, limit, extraTrackers) {

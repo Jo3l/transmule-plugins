@@ -16,7 +16,8 @@ export default {
     description:
       "Public-domain movies, music, books & software torrents from archive.org.",
     version: "1.0.0",
-    repository: "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/manifest.json",
+    repository:
+      "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/manifest.json",
   },
 
   async search(query, limit, extraTrackers) {

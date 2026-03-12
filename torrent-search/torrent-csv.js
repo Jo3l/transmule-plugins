@@ -15,7 +15,8 @@ export default {
     pluginType: "torrent-search",
     description: "BitTorrent DHT index with clean JSON API (torrents-csv.ml).",
     version: "1.0.0",
-    repository: "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/manifest.json",
+    repository:
+      "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/manifest.json",
   },
 
   async search(query, limit, extraTrackers) {
