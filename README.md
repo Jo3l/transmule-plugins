@@ -31,7 +31,7 @@ Upload any `.js` file via **Settings → Providers → Upload Plugin** — no se
 | [torrent-search/nyaa.js](torrent-search/nyaa.js)                         | `nyaa`             | Nyaa             | Anime & manga torrents via nyaa.si RSS                                      |
 | [torrent-search/piratebay.js](torrent-search/piratebay.js)               | `tpb`              | The Pirate Bay   | General torrents via apibay.org JSON API                                    |
 | [torrent-search/yts-search.js](torrent-search/yts-search.js)             | `yts`              | YTS              | Movie torrents via YTS.mx JSON API                                          |
-| [torrent-search/1337x.js](torrent-search/1337x.js)                       | `1337x`            | 1337x            | Popular public index (movies, TV, games, music) — 2-stage scraper           |
+| [torrent-search/1337x.js](torrent-search/1337x.js)                       | `1337x`            | 1337x (v1.1.0)   | Popular public index (movies, TV, games, music) — 2-stage scraper           |
 | [torrent-search/eztv.js](torrent-search/eztv.js)                         | `eztv`             | EZTV             | TV show torrents from eztvx.to — magnet links scraped directly from results |
 | [torrent-search/kickasstorrents.js](torrent-search/kickasstorrents.js)   | `kickasstorrents`  | KickassTorrents  | General public index — magnet links scraped directly from results           |
 | [torrent-search/torrentkitty.js](torrent-search/torrentkitty.js)         | `torrentkitty`     | TorrentKitty     | DHT search engine — magnet links scraped directly from results              |

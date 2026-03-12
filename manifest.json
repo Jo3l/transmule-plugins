@@ -31,7 +31,7 @@
     {
       "id": "1337x",
       "name": "1337x",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "pluginType": "torrent-search",
       "icon": "mdi-numeric-1-box",
       "description": "1337x — popular public torrent index (movies, TV, games, music).",
