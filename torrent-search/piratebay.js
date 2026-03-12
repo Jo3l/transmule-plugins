@@ -10,6 +10,8 @@ export default {
     icon: "mdi-pirate",
     pluginType: "torrent-search",
     description: "The Pirate Bay torrent index via apibay.org.",
+    version: "1.0.0",
+    repository: "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/manifest.json",
   },
 
   async search(query, limit, extraTrackers) {

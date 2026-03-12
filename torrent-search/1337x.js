@@ -31,6 +31,8 @@ export default {
     pluginType: "torrent-search",
     description:
       "1337x — popular public torrent index (movies, TV, games, music).",
+    version: "1.0.0",
+    repository: "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/manifest.json",
   },
 
   async search(query, limit, extraTrackers) {

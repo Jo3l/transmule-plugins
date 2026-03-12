@@ -1,0 +1,86 @@
+{
+  "name": "TransMule Official Plugins",
+  "plugins": [
+    {
+      "id": "nyaa",
+      "name": "Nyaa",
+      "version": "1.0.0",
+      "pluginType": "torrent-search",
+      "icon": "mdi-cat",
+      "description": "Anime and manga torrent index (nyaa.si).",
+      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/nyaa.js"
+    },
+    {
+      "id": "tpb",
+      "name": "The Pirate Bay",
+      "version": "1.0.0",
+      "pluginType": "torrent-search",
+      "icon": "mdi-pirate",
+      "description": "The Pirate Bay torrent index via apibay.org.",
+      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/piratebay.js"
+    },
+    {
+      "id": "yts-search",
+      "name": "YTS",
+      "version": "1.0.0",
+      "pluginType": "torrent-search",
+      "icon": "mdi-filmstrip",
+      "description": "Movie torrents from YTS.mx (high-quality encodes).",
+      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/yts-search.js"
+    },
+    {
+      "id": "1337x",
+      "name": "1337x",
+      "version": "1.0.0",
+      "pluginType": "torrent-search",
+      "icon": "mdi-numeric-1-box",
+      "description": "1337x — popular public torrent index (movies, TV, games, music).",
+      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/1337x.js"
+    },
+    {
+      "id": "eztv",
+      "name": "EZTV",
+      "version": "1.0.0",
+      "pluginType": "torrent-search",
+      "icon": "mdi-television-play",
+      "description": "TV show torrents from EZTV (eztvx.to).",
+      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/eztv.js"
+    },
+    {
+      "id": "kickasstorrents",
+      "name": "KickassTorrents",
+      "version": "1.0.0",
+      "pluginType": "torrent-search",
+      "icon": "mdi-skull-crossbones",
+      "description": "General torrent index — KickassTorrents public clone.",
+      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/kickasstorrents.js"
+    },
+    {
+      "id": "torrentkitty",
+      "name": "TorrentKitty",
+      "version": "1.0.0",
+      "pluginType": "torrent-search",
+      "icon": "mdi-cat",
+      "description": "DHT torrent search engine (torrentkitty). No seeder data.",
+      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/torrentkitty.js"
+    },
+    {
+      "id": "torrent-csv",
+      "name": "TorrentCSV",
+      "version": "1.0.0",
+      "pluginType": "torrent-search",
+      "icon": "mdi-database-search",
+      "description": "BitTorrent DHT index with clean JSON API (torrents-csv.ml).",
+      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/torrent-csv.js"
+    },
+    {
+      "id": "internet-archive",
+      "name": "Internet Archive",
+      "version": "1.0.0",
+      "pluginType": "torrent-search",
+      "icon": "mdi-archive",
+      "description": "Public-domain movies, music, books & software torrents from archive.org.",
+      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/internet-archive.js"
+    }
+  ]
+}

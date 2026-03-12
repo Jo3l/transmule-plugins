@@ -11,6 +11,8 @@ export default {
     icon: "mdi-cat",
     pluginType: "torrent-search",
     description: "Anime and manga torrent index (nyaa.si).",
+    version: "1.0.0",
+    repository: "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/manifest.json",
   },
 
   async search(query, limit, extraTrackers) {
