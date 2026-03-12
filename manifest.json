@@ -81,6 +81,46 @@
       "icon": "mdi-archive",
       "description": "Public-domain movies, music, books & software torrents from archive.org.",
       "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/internet-archive.js"
+    },
+    {
+      "id": "yts",
+      "name": "YTS",
+      "version": "1.0.0",
+      "pluginType": "media",
+      "mediaType": "movies",
+      "icon": "mdi-filmstrip",
+      "description": "YTS.mx movie torrents (high-quality encodes).",
+      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/media/yts.js"
+    },
+    {
+      "id": "dontorrent-movies",
+      "name": "DonTorrent Movies",
+      "version": "1.0.0",
+      "pluginType": "media",
+      "mediaType": "movies",
+      "icon": "mdi-movie-play",
+      "description": "DonTorrent movie torrents (Spanish).",
+      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/media/dontorrent-movies.js"
+    },
+    {
+      "id": "dontorrent-shows",
+      "name": "DonTorrent Series",
+      "version": "1.0.0",
+      "pluginType": "media",
+      "mediaType": "shows",
+      "icon": "mdi-television-play",
+      "description": "DonTorrent series torrents (Spanish).",
+      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/media/dontorrent-shows.js"
+    },
+    {
+      "id": "showrss",
+      "name": "ShowRSS",
+      "version": "1.0.0",
+      "pluginType": "media",
+      "mediaType": "shows",
+      "icon": "mdi-rss",
+      "description": "TV show torrents via your ShowRSS RSS feed.",
+      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/media/showrss.js"
     }
   ]
 }
