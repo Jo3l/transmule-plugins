@@ -14,6 +14,9 @@ export default {
     icon: "mdi-rss",
     mediaType: "shows",
     description: "TV show torrents via your ShowRSS RSS feed.",
+    version: "1.0.0",
+    repository:
+      "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/manifest.json",
   },
 
   filters: [

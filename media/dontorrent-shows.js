@@ -168,6 +168,9 @@ export default {
     icon: "mdi-movie-play",
     mediaType: "shows",
     description: "DonTorrent series torrents (Spanish)",
+    version: "1.0.0",
+    repository:
+      "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/manifest.json",
   },
 
   async list(params) {

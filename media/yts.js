@@ -138,6 +138,9 @@ export default {
     icon: "mdi-filmstrip",
     mediaType: "movies",
     description: "YTS.mx movie torrents",
+    version: "1.0.0",
+    repository:
+      "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/manifest.json",
   },
   filters,
 
