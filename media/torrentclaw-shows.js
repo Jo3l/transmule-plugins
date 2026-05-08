@@ -132,6 +132,7 @@ function toMediaItem(item) {
 async function fetchItems(params) {
   const page = params.page || 1;
   const url = new URL(`${API_BASE}/popular`);
+  url.searchParams.set("type", "show");
   url.searchParams.set("limit", String(Math.min(Number(params.limit) || 20, 50)));
   url.searchParams.set("page", String(page));
   const cacheKey = url.toString();
@@ -157,12 +158,16 @@ async function fetchItems(params) {
     .filter((item) => (item.contentType || item.type || "") === "show")
     .map(toMediaItem);
 
+  const total = body.total ?? items.length;
+  const hasMore = total > page * (Number(params.limit) || 20);
+
   if (items.length === 0 && rawResults.length > 0) {
+    const fallbackItems = rawResults.map(toMediaItem);
     const result = {
-      items: rawResults.map(toMediaItem),
-      total: body.total ?? rawResults.length,
+      items: fallbackItems,
+      total,
       page,
-      hasMore: rawResults.length >= (Number(params.limit) || 20),
+      hasMore,
     };
     _listCache.set(cacheKey, { ts: Date.now(), data: result });
     return result;
@@ -170,9 +175,9 @@ async function fetchItems(params) {
 
   const result = {
     items,
-    total: body.total ?? items.length,
+    total,
     page,
-    hasMore: items.length >= (Number(params.limit) || 20),
+    hasMore,
   };
   _listCache.set(cacheKey, { ts: Date.now(), data: result });
   return result;
