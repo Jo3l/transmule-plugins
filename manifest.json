@@ -130,6 +130,26 @@
       "icon": "mdi-rss",
       "description": "TV show torrents via your ShowRSS RSS feed.",
       "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/media/showrss.js"
+    },
+    {
+      "id": "torrentclaw-movies",
+      "name": "TorrentClaw Popular Movies",
+      "version": "1.0.0",
+      "pluginType": "media",
+      "mediaType": "movies",
+      "icon": "mdi-shield-check",
+      "description": "Popular movies from TorrentClaw — 30+ sources, TrueSpec quality scores, rich metadata tags.",
+      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/media/torrentclaw-movies.js"
+    },
+    {
+      "id": "torrentclaw-shows",
+      "name": "TorrentClaw Popular Series",
+      "version": "1.0.0",
+      "pluginType": "media",
+      "mediaType": "shows",
+      "icon": "mdi-shield-check",
+      "description": "Popular TV shows from TorrentClaw — 30+ sources, TrueSpec quality scores, rich metadata tags.",
+      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/media/torrentclaw-shows.js"
     }
   ]
 }
