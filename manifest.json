@@ -83,6 +83,15 @@
       "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/internet-archive.js"
     },
     {
+      "id": "torrentclaw",
+      "name": "TorrentClaw",
+      "version": "1.0.0",
+      "pluginType": "torrent-search",
+      "icon": "mdi-shield-check",
+      "description": "TorrentClaw — 30+ sources, TrueSpec quality scores, rich metadata tags.",
+      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/torrentclaw.js"
+    },
+    {
       "id": "yts",
       "name": "YTS",
       "version": "1.0.0",

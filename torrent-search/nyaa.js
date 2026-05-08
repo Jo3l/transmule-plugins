@@ -98,8 +98,10 @@ function parseSize(s) {
 }
 
 function extractTag(xml, tag) {
+  // Exact tag match: require whitespace or > right after the tag name
+  // This prevents "nyaa:category" from matching "nyaa:categoryId"
   const re = new RegExp(
-    `<${tag}[^>]*><!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\\/${tag}>|<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`,
+    `<${tag}(?:\\s[^>]*)?><!\\[CDATA\\[([\\s\\S]*?)\\]\\]></${tag}>|<${tag}(?:\\s[^>]*)?>([\\s\\S]*?)</${tag}>`,
   );
   const m = xml.match(re);
   return m ? (m[1] ?? m[2] ?? "").trim() : "";

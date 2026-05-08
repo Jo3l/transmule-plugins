@@ -245,8 +245,57 @@ async search(query, limit, extraTrackers) { … }
   uploadedAt: string | null, // ISO 8601 date or null
   source: string,         // should match meta.id
   category: string | null,
+  cover?: string | null,  // poster / cover image URL (TMDB)
+  tags?: TorrentTag[],    // optional decorative badges (see below)
 }
 ```
+
+### `TorrentTag` shape (decorative badges)
+
+Since v1.0.0, torrent-search plugins can return optional **tags** — small colored badges rendered below the torrent name in the results table. They are purely decorative (no effect on search/sorting).
+
+```js
+{
+  label: string,    // Display text, e.g. "2160p", "HEVC", "🇬🇧 EN"
+  variant?: string, // Color variant (see table below)
+  icon?: string,    // MDI icon class, e.g. "mdi-shield-check"
+  tooltip?: string, // Hover tooltip text
+}
+```
+
+| Variant    | Visual style         | Best for                               |
+| ---------- | -------------------- | -------------------------------------- |
+| `default`  | Neutral gray         | Languages, size, generic info          |
+| `success`  | Green                | Quality scores, verified badges        |
+| `warning`  | Amber / yellow       | Resolution, HDR type                   |
+| `info`     | Blue / cyan          | Codec, source type                     |
+| `accent`   | Purple               | Audio codec                            |
+| `danger`   | Red                  | Low seeds, warnings                    |
+| `primary`  | Indigo               | Custom highlights                      |
+
+**Example:** A 4K HDR BluRay with TrueSpec score:
+
+```js
+tags: [
+  { label: "92", variant: "success", icon: "mdi-shield-check", tooltip: "TrueSpec Quality Score" },
+  { label: "2160p", variant: "warning" },
+  { label: "DV+HDR10", variant: "warning", tooltip: "Dolby Vision + HDR10" },
+  { label: "BLURAY", variant: "info" },
+  { label: "HEVC", variant: "info" },
+  { label: "TRUEHD", variant: "accent", tooltip: "Dolby TrueHD 7.1" },
+  { label: "🇬🇧 EN", variant: "default" },
+  { label: "🇪🇸 ES", variant: "default" },
+]
+```
+
+This renders as a row of compact colored badges below the torrent name, like the tag system on TorrentClaw.
+
+> **Note for plugin authors:** You only need to return `tags` if your source
+> provides **structured metadata** (quality, codec, audio, languages, HDR as
+> separate fields). If you only return the torrent `name`, the TransMule
+> middleware **automatically parses the name** and extracts quality, codec,
+> audio, languages, HDR, and release flags — so your results get tags
+> without any extra work.
 
 ---
 
