@@ -7,6 +7,14 @@
  */
 const API_BASE = "https://torrentclaw.com/api/v1";
 
+// ── Session cache to avoid rate limiting ──────────────────────
+const CACHE_TTL = {
+  list: 60 * 60 * 1000,    // 1 hour for popular content
+  detail: 6 * 60 * 60 * 1000, // 6 hours for movie torrents
+};
+const _listCache = new Map();
+const _detailCache = new Map();
+
 const MAGNET_TRACKERS = [
   "udp://open.demonii.com:1337/announce",
   "udp://tracker.openbittorrent.com:80",
@@ -127,6 +135,12 @@ async function fetchItems(params) {
   const url = new URL(`${API_BASE}/popular`);
   url.searchParams.set("limit", String(Math.min(Number(params.limit) || 20, 50)));
   url.searchParams.set("page", String(page));
+  const cacheKey = url.toString();
+
+  const cached = _listCache.get(cacheKey);
+  if (cached && Date.now() - cached.ts < CACHE_TTL.list) {
+    return cached.data;
+  }
 
   const res = await fetch(url.toString(), {
     headers: { "User-Agent": "TransMule/1.0 torrentclaw-popular" },
@@ -145,20 +159,24 @@ async function fetchItems(params) {
     .map(toMediaItem);
 
   if (items.length === 0 && rawResults.length > 0) {
-    return {
+    const result = {
       items: rawResults.map(toMediaItem),
       total: body.total ?? rawResults.length,
       page,
       hasMore: rawResults.length >= (Number(params.limit) || 20),
     };
+    _listCache.set(cacheKey, { ts: Date.now(), data: result });
+    return result;
   }
 
-  return {
+  const result = {
     items,
     total: body.total ?? items.length,
     page,
     hasMore: items.length >= (Number(params.limit) || 20),
   };
+  _listCache.set(cacheKey, { ts: Date.now(), data: result });
+  return result;
 }
 
 // ── Detail: fetch ALL torrents for a specific movie ────────────
@@ -170,6 +188,12 @@ async function detail(searchQuery) {
   url.searchParams.set("q", searchQuery);
   url.searchParams.set("type", "movie");
   url.searchParams.set("limit", "50");
+  const cacheKey = url.toString();
+
+  const cached = _detailCache.get(cacheKey);
+  if (cached && Date.now() - cached.ts < CACHE_TTL.detail) {
+    return cached.data;
+  }
 
   const res = await fetch(url.toString(), {
     headers: { "User-Agent": "TransMule/1.0 torrentclaw-detail" },
@@ -193,11 +217,13 @@ async function detail(searchQuery) {
   const title = match.titleOriginal || match.title || searchQuery;
   const torrents = match.torrents ?? [];
 
-  return {
+  const result = {
     links: torrents.map((tor) => buildLink(tor, title)),
     // Keep needsDetail true so the card never shows links in footer
     needsDetail: true,
   };
+  _detailCache.set(cacheKey, { ts: Date.now(), data: result });
+  return result;
 }
 
 // ── Plugin export ──────────────────────────────────────────────
