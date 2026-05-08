@@ -37,6 +37,7 @@ Upload any `.js` file via **Settings → Providers → Upload Plugin** — no se
 | [torrent-search/torrentkitty.js](torrent-search/torrentkitty.js)         | `torrentkitty`     | TorrentKitty     | DHT search engine — magnet links scraped directly from results              |
 | [torrent-search/torrent-csv.js](torrent-search/torrent-csv.js)           | `torrent-csv`      | TorrentCSV       | BitTorrent DHT index with clean JSON API (torrents-csv.ml)                  |
 | [torrent-search/internet-archive.js](torrent-search/internet-archive.js) | `internet-archive` | Internet Archive | Public-domain movies, music, books & software via archive.org JSON API      |
+| [torrent-search/torrentclaw.js](torrent-search/torrentclaw.js)           | `torrentclaw`      | TorrentClaw      | 30+ sources, TrueSpec quality scores, rich metadata tags & posters          |
 
 ---
 
