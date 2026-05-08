@@ -128,11 +128,15 @@ function toMediaItem(item) {
 }
 
 // ── Fetch popular list ─────────────────────────────────────────
-
+// The popular endpoint rarely returns shows.  Use the search
+// endpoint with a very broad query sorted by seeders, which
+// effectively returns the most popular shows.
 async function fetchItems(params) {
   const page = params.page || 1;
-  const url = new URL(`${API_BASE}/popular`);
+  const url = new URL(`${API_BASE}/search`);
+  url.searchParams.set("q", "a"); // broadest possible search
   url.searchParams.set("type", "show");
+  url.searchParams.set("sort", "seeders");
   url.searchParams.set("limit", String(Math.min(Number(params.limit) || 20, 50)));
   url.searchParams.set("page", String(page));
   const cacheKey = url.toString();
