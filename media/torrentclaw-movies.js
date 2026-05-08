@@ -195,7 +195,8 @@ async function detail(searchQuery) {
 
   return {
     links: torrents.map((tor) => buildLink(tor, title)),
-    needsDetail: false,
+    // Keep needsDetail true so the card never shows links in footer
+    needsDetail: true,
   };
 }
 
