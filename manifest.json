@@ -104,7 +104,7 @@
     {
       "id": "dontorrent-movies",
       "name": "DonTorrent Movies",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "pluginType": "media",
       "mediaType": "movies",
       "icon": "mdi-movie-play",

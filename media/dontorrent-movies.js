@@ -88,6 +88,36 @@ function extractField(html, label) {
   return m ? stripTags(m[1]) : "";
 }
 
+// ── Quality / source detection ─────────────────────────────────────
+
+function detectQuality(text) {
+  const qRe =
+    /\b(?:2160[Pp]|4[Kk]|1080[Pp]|720[Pp]|480[Pp]|360[Pp]|UHD[ -]?2160[Pp]?|FULL[ -]?HD|HD[ -]?READY|SD)\b/;
+  const m = qRe.exec(text);
+  return m ? m[0].toUpperCase() : null;
+}
+
+function detectSourceType(text) {
+  const sRe =
+    /\b(BLURAY|WEB[- ]?DL|WEB[- ]?RIP|HDRIP|HDTV|DVDRIP|BRRIP|BDRIP|DVD[ -]?RIP|TS|CAM|TELESYNC)\b/i;
+  const m = sRe.exec(text);
+  return m ? m[0].toUpperCase().replace(/[- ]/g, "-") : null;
+}
+
+// Look for quality/size in the text before a link (up to 400 chars)
+function contextBefore(pos, html) {
+  const before = html.slice(Math.max(0, pos - 400), pos);
+  const q = detectQuality(before);
+  const sizeRe = /(\d+(?:[.,]\d+)?)\s*(GB|MB|GiB|MiB)/i;
+  const sizeM = sizeRe.exec(before);
+  return {
+    quality: q,
+    size: sizeM ? sizeM[1] + " " + sizeM[2].toUpperCase() : null,
+  };
+}
+
+// ── Detail page parser ─────────────────────────────────────────────
+
 function parseDetailPage(html) {
   const coverMatch =
     /img[^>]+src=["'](https?:\/\/(?:images\.weserv\.nl|[^"']*cdnbeta[^"']*|[^"']*imagenes\/peliculas[^"']*))["']/i.exec(
@@ -95,26 +125,94 @@ function parseDetailPage(html) {
     );
   const cover = coverMatch?.[1] ?? "";
 
-  const torrentMatch =
-    /href=["']((?:https?:)?\/\/[^"']*\.torrent[^"']*)["']/i.exec(html);
-  let torrentUrl = "";
-  if (torrentMatch) {
-    const raw = torrentMatch[1];
-    torrentUrl = raw.startsWith("//") ? "https:" + raw : raw;
-  }
-
   const year = extractField(html, "A[ñn]o");
   const genre = extractField(html, "G[eé]nero");
   const director = extractField(html, "Director");
   const actors = extractField(html, "Actores");
-  const format = extractField(html, "Formato");
-  const size = extractField(html, "Tama[ñn]o");
+  const pageFormat = extractField(html, "Formato");
+  const pageSize = extractField(html, "Tama[ñn]o");
 
   const descMatch =
-    /<b[^>]*>Descripci[oó]n[:\s]*<\/b>\s*([\s\S]*?)(?:<\/p>|<a\s+href="\/descargar)/i.exec(
+    /<b[^>]*>Descripci[oó]n[:\\s]*<\/b>\s*([\s\S]*?)(?:<\/p>|<a\s+href="\/descargar)/i.exec(
       html,
     );
   const description = descMatch ? stripTags(descMatch[1]) : "";
+
+  // ── Find ALL download links ─────────────────────────────────────
+  const links = [];
+  const seen = new Set();
+
+  // Match .torrent links and magnet links
+  const linkRe =
+    /<a\s[^>]*\bhref=["']((?:https?:)?\/\/[^"']*\.torrent[^"']*|magnet:\?[^"']*)["'][^>]*>([\s\S]*?)<\/a>/gi;
+  let m;
+
+  while ((m = linkRe.exec(html)) !== null) {
+    const rawUrl = m[1];
+    const linkText = stripTags(m[2]).trim();
+    const pos = m.index;
+
+    let url = rawUrl;
+    if (rawUrl.startsWith("//")) url = "https:" + rawUrl;
+    if (seen.has(url)) continue;
+    seen.add(url);
+
+    // Quality: link text → nearby context → page format field
+    let quality = detectQuality(linkText);
+    if (!quality) {
+      const ctx = contextBefore(pos, html);
+      quality = ctx.quality;
+    }
+    if (!quality) quality = detectQuality(pageFormat);
+
+    // Source type: from link text + page format
+    let type = detectSourceType(linkText + " " + pageFormat);
+    if (!type && quality === "720P" || quality === "1080P" || quality === "2160P") {
+      // Heuristic: most DonTorrent movies are WEB-DL unless specified
+      type = detectSourceType(linkText) || "WEB-DL";
+    }
+
+    // Size: from context before link → page-level size
+    const ctx = contextBefore(pos, html);
+    const size = ctx.size || pageSize || undefined;
+
+    // Tags
+    const tags = [];
+    if (quality) tags.push({ label: quality, variant: "warning", tooltip: "Resolution" });
+    if (type) tags.push({ label: type, variant: "info", tooltip: "Source" });
+
+    // Display label
+    const label = [quality, type].filter(Boolean).join(" ") || pageFormat || "Descargar";
+
+    links.push({
+      url,
+      label,
+      quality: quality || undefined,
+      type: type || undefined,
+      size,
+      tags,
+    });
+  }
+
+  // ── Fallback: single link via old approach ──────────────────────
+  if (links.length === 0) {
+    const torrentMatch =
+      /href=["']((?:https?:)?\/\/[^"']*\.torrent[^"']*)["']/i.exec(html);
+    if (torrentMatch) {
+      const raw = torrentMatch[1];
+      const url = raw.startsWith("//") ? "https:" + raw : raw;
+      const q = detectQuality(pageFormat);
+      const tags = [];
+      if (q) tags.push({ label: q, variant: "warning", tooltip: "Resolution" });
+      links.push({
+        url,
+        label: pageFormat || "Download",
+        quality: q || undefined,
+        size: pageSize || undefined,
+        tags,
+      });
+    }
+  }
 
   return {
     cover,
@@ -122,10 +220,11 @@ function parseDetailPage(html) {
     genre,
     director,
     actors,
-    format,
-    size,
+    format: pageFormat,
+    size: pageSize,
     description,
-    links: torrentUrl ? [{ label: format || "Download", url: torrentUrl }] : [],
+    links,
+    needsDetail: true,
   };
 }
 
@@ -154,7 +253,7 @@ export default {
     icon: "mdi-movie-play",
     mediaType: "movies",
     description: "DonTorrent movie torrents (Spanish)",
-    version: "1.0.0",
+    version: "1.1.0",
     repository:
       "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/manifest.json",
   },
