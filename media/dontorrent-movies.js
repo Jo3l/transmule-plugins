@@ -104,12 +104,13 @@ function detectSourceType(text) {
   return m ? m[0].toUpperCase().replace(/[- ]/g, "-") : null;
 }
 
-// Look for quality/size in the text before a link (up to 400 chars)
-function contextBefore(pos, html) {
-  const before = html.slice(Math.max(0, pos - 400), pos);
+// Look for quality/size in the text around a link (up to 500 chars each way)
+function contextAround(pos, html) {
+  const before = html.slice(Math.max(0, pos - 500), pos);
+  const after = html.slice(pos + 1, pos + 501);
   const q = detectQuality(before);
   const sizeRe = /(\d+(?:[.,]\d+)?)\s*(GB|MB|GiB|MiB)/i;
-  const sizeM = sizeRe.exec(before);
+  const sizeM = sizeRe.exec(before) || sizeRe.exec(after);
   return {
     quality: q,
     size: sizeM ? sizeM[1] + " " + sizeM[2].toUpperCase() : null,
@@ -142,9 +143,9 @@ function parseDetailPage(html) {
   const links = [];
   const seen = new Set();
 
-  // Match .torrent links and magnet links
+  // Match torrent download links: .torrent, magnet, or /descargar/ URLs
   const linkRe =
-    /<a\s[^>]*\bhref=["']((?:https?:)?\/\/[^"']*\.torrent[^"']*|magnet:\?[^"']*)["'][^>]*>([\s\S]*?)<\/a>/gi;
+    /<a\s[^>]*\bhref=["']((?:https?:)?\/\/[^"']*\.torrent[^"']*|magnet:\?[^"']*|[^"']*\/descargar\/[^"']*)["'][^>]*>([\s\S]*?)<\/a>/gi;
   let m;
 
   while ((m = linkRe.exec(html)) !== null) {
@@ -160,20 +161,20 @@ function parseDetailPage(html) {
     // Quality: link text → nearby context → page format field
     let quality = detectQuality(linkText);
     if (!quality) {
-      const ctx = contextBefore(pos, html);
+      const ctx = contextAround(pos, html);
       quality = ctx.quality;
     }
     if (!quality) quality = detectQuality(pageFormat);
 
     // Source type: from link text + page format
     let type = detectSourceType(linkText + " " + pageFormat);
-    if (!type && quality === "720P" || quality === "1080P" || quality === "2160P") {
+    if (!type && (quality === "720P" || quality === "1080P" || quality === "2160P")) {
       // Heuristic: most DonTorrent movies are WEB-DL unless specified
       type = detectSourceType(linkText) || "WEB-DL";
     }
 
-    // Size: from context before link → page-level size
-    const ctx = contextBefore(pos, html);
+    // Size: from context around link → page-level size
+    const ctx = contextAround(pos, html);
     const size = ctx.size || pageSize || undefined;
 
     // Tags
