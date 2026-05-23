@@ -83,6 +83,15 @@
       "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/internet-archive.js"
     },
     {
+      "id": "archive-org",
+      "name": "Archive.org",
+      "version": "1.0.0",
+      "pluginType": "torrent-search",
+      "icon": "mdi-archive",
+      "description": "Internet Archive — full search with torrents (→Transmission) and direct downloads (→pyLoad).",
+      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/archive-org.js"
+    },
+    {
       "id": "torrentclaw",
       "name": "TorrentClaw",
       "version": "1.0.0",
