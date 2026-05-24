@@ -9,12 +9,12 @@
  */
 export default {
   meta: {
-    id: "internet-archive",
-    name: "Internet Archive",
+    id: "internet-archive-torrent",
+    name: "Internet Archive Torrent",
     icon: "mdi-archive",
     pluginType: "torrent-search",
     description:
-      "Public-domain movies, music, books & software torrents from archive.org.",
+      "Public-domain movies, music, books & software torrents from archive.org (Archive BitTorrent format only).",
     version: "1.0.0",
     repository:
       "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/manifest.json",
@@ -77,7 +77,7 @@ export default {
         uploadedAt: doc.publicdate
           ? new Date(doc.publicdate).toISOString()
           : null,
-        source: "internet-archive",
+        source: "internet-archive-torrent",
         category: doc.mediatype || "Other",
       });
     }

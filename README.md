@@ -25,6 +25,7 @@ Upload any `.js` file via **Settings → Providers → Upload Plugin** — no se
 | [media/torrentclaw-shows.js](media/torrentclaw-shows.js)   | `torrentclaw-shows`  | TorrentClaw | `shows`  | Popular TV shows — 30+ sources, TrueSpec quality scores     |
 | [media/yts.js](media/yts.js)                             | `yts`               | YTS        | `movies` | Movie browse/search via YTS.mx with quality & genre filters |
 | [media/showrss.js](media/showrss.js)                     | `showrss`           | ShowRSS    | `shows`  | TV show torrents from your personal ShowRSS RSS feed        |
+| [media/archive-org.js](media/archive-org.js)             | `archive-org`       | Archive.org | `archive` | Search all content (movies, audio, books, software, images) — direct download |
 
 ### Torrent-search providers
 
@@ -38,8 +39,7 @@ Upload any `.js` file via **Settings → Providers → Upload Plugin** — no se
 | [torrent-search/kickasstorrents.js](torrent-search/kickasstorrents.js)   | `kickasstorrents`  | KickassTorrents  | General public index — magnet links scraped directly from results           |
 | [torrent-search/torrentkitty.js](torrent-search/torrentkitty.js)         | `torrentkitty`     | TorrentKitty     | DHT search engine — magnet links scraped directly from results              |
 | [torrent-search/torrent-csv.js](torrent-search/torrent-csv.js)           | `torrent-csv`      | TorrentCSV       | BitTorrent DHT index with clean JSON API (torrents-csv.ml)                  |
-| [torrent-search/internet-archive.js](torrent-search/internet-archive.js) | `internet-archive` | Internet Archive | Public-domain movies, music, books & software via archive.org JSON API      |
-| [torrent-search/archive-org.js](torrent-search/archive-org.js)         | `archive-org`      | Archive.org (v1.0.0) | Full search — torrents go to Transmission, direct downloads to pyLoad   |
+| [torrent-search/internet-archive.js](torrent-search/internet-archive.js) | `internet-archive-torrent` | Internet Archive Torrent | Public-domain movies, music, books & software torrents (Archive BitTorrent format only) |
 | [torrent-search/torrentclaw.js](torrent-search/torrentclaw.js)           | `torrentclaw`      | TorrentClaw      | 30+ sources, TrueSpec quality scores, rich metadata tags & posters          |
 
 ---

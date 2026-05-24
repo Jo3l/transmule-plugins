@@ -34,7 +34,7 @@
       "version": "1.1.0",
       "pluginType": "torrent-search",
       "icon": "mdi-numeric-1-box",
-      "description": "1337x — popular public torrent index (movies, TV, games, music).",
+      "description": "1337x \u2014 popular public torrent index (movies, TV, games, music).",
       "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/1337x.js"
     },
     {
@@ -52,7 +52,7 @@
       "version": "1.0.0",
       "pluginType": "torrent-search",
       "icon": "mdi-skull-crossbones",
-      "description": "General torrent index — KickassTorrents public clone.",
+      "description": "General torrent index \u2014 KickassTorrents public clone.",
       "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/kickasstorrents.js"
     },
     {
@@ -74,22 +74,13 @@
       "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/torrent-csv.js"
     },
     {
-      "id": "internet-archive",
-      "name": "Internet Archive",
+      "id": "internet-archive-torrent",
+      "name": "Internet Archive Torrent",
       "version": "1.0.0",
       "pluginType": "torrent-search",
       "icon": "mdi-archive",
-      "description": "Public-domain movies, music, books & software torrents from archive.org.",
+      "description": "Public-domain movies, music, books & software torrents from archive.org (Archive BitTorrent format only).",
       "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/internet-archive.js"
-    },
-    {
-      "id": "archive-org",
-      "name": "Archive.org",
-      "version": "1.0.0",
-      "pluginType": "torrent-search",
-      "icon": "mdi-archive",
-      "description": "Internet Archive — full search with torrents (→Transmission) and direct downloads (→pyLoad).",
-      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/archive-org.js"
     },
     {
       "id": "torrentclaw",
@@ -97,7 +88,7 @@
       "version": "1.0.0",
       "pluginType": "torrent-search",
       "icon": "mdi-shield-check",
-      "description": "TorrentClaw — 30+ sources, TrueSpec quality scores, rich metadata tags.",
+      "description": "TorrentClaw \u2014 30+ sources, TrueSpec quality scores, rich metadata tags.",
       "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/torrentclaw.js"
     },
     {
@@ -147,7 +138,7 @@
       "pluginType": "media",
       "mediaType": "movies",
       "icon": "mdi-shield-check",
-      "description": "Popular movies from TorrentClaw — 30+ sources, TrueSpec quality scores, rich metadata tags.",
+      "description": "Popular movies from TorrentClaw \u2014 30+ sources, TrueSpec quality scores, rich metadata tags.",
       "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/media/torrentclaw-movies.js"
     },
     {
@@ -157,8 +148,18 @@
       "pluginType": "media",
       "mediaType": "shows",
       "icon": "mdi-shield-check",
-      "description": "Popular TV shows from TorrentClaw — 30+ sources, TrueSpec quality scores, rich metadata tags.",
+      "description": "Popular TV shows from TorrentClaw \u2014 30+ sources, TrueSpec quality scores, rich metadata tags.",
       "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/media/torrentclaw-shows.js"
+    },
+    {
+      "id": "archive-org",
+      "name": "Archive.org",
+      "version": "2.2.0",
+      "pluginType": "media",
+      "mediaType": "archive",
+      "icon": "mdi-archive",
+      "description": "Search all Internet Archive content (movies, audio, books, software, images, data) \u2014 direct download or torrent.",
+      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/media/archive-org.js"
     }
   ]
 }
