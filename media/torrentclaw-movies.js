@@ -132,6 +132,13 @@ function toMediaItem(item) {
 
 async function fetchItems(params) {
   const page = params.page || 1;
+
+  // Bypass all caches when _noCache is set (refresh button)
+  if (params._noCache) {
+    _listCache.clear();
+    _detailCache.clear();
+  }
+
   const url = new URL(`${API_BASE}/popular`);
   url.searchParams.set("type", "movie");
   url.searchParams.set("limit", String(Math.min(Number(params.limit) || 20, 50)));

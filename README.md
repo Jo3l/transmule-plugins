@@ -21,6 +21,8 @@ Upload any `.js` file via **Settings → Providers → Upload Plugin** — no se
 | -------------------------------------------------------- | ------------------- | ---------- | -------- | ----------------------------------------------------------- |
 | [media/dontorrent-movies.js](media/dontorrent-movies.js) | `dontorrent-movies` | DonTorrent | `movies` | Spanish movie torrents from dontorrent.link                 |
 | [media/dontorrent-shows.js](media/dontorrent-shows.js)   | `dontorrent-shows`  | DonTorrent | `shows`  | Spanish series torrents from dontorrent.link                |
+| [media/torrentclaw-movies.js](media/torrentclaw-movies.js) | `torrentclaw-movies` | TorrentClaw | `movies` | Popular movies — 30+ sources, TrueSpec quality scores       |
+| [media/torrentclaw-shows.js](media/torrentclaw-shows.js)   | `torrentclaw-shows`  | TorrentClaw | `shows`  | Popular TV shows — 30+ sources, TrueSpec quality scores     |
 | [media/yts.js](media/yts.js)                             | `yts`               | YTS        | `movies` | Movie browse/search via YTS.mx with quality & genre filters |
 | [media/showrss.js](media/showrss.js)                     | `showrss`           | ShowRSS    | `shows`  | TV show torrents from your personal ShowRSS RSS feed        |
 

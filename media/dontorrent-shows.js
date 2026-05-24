@@ -175,6 +175,13 @@ export default {
 
   async list(params) {
     const listUrl = params.url || DEFAULT_URL;
+
+    // Bypass all caches when _noCache is set (refresh button)
+    if (params._noCache) {
+      _listCache.clear();
+      _detailCache.clear();
+    }
+
     const cached = _listCache.get(listUrl);
     if (cached && Date.now() - cached.ts < SIX_HOURS_MS) {
       return { items: cached.data.map(toMediaItem) };
