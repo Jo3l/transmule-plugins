@@ -348,11 +348,11 @@ Un plugin declara las capacidades del core que necesita (p. ej. `"cardigann"`) y
 
 ---
 
-## indexerr — unified torrent search (autonomous plugin)
+## Indexerr — unified torrent search (autonomous plugin)
 
-`indexerr` reemplaza a los plugins por-tracker. Lee **definiciones de indexers** en formato Cardigann YAML (el mismo formato que Jackett) y las re-sincroniza una vez al día.
+**Indexerr** reemplaza a los plugins por-tracker. Lee **definiciones de indexers** en formato Cardigann YAML (el mismo formato que Jackett) y las re-sincroniza una vez al día.
 
-- Declara `capability: "cardigann"`; el motor (parser YAML + plantillas + selectores + filtros) vive en el core como **capacidad genérica**, no como código de indexerr.
+- Declara `capability: "cardigann"`; el motor (parser YAML + plantillas + selectores + filtros) vive en el core como **capacidad genérica**, no como código de Indexerr.
 - Instala sus propias rutas (definiciones/instancias) y declara su sección de settings.
 - Persiste el catálogo y las instancias en `ctx.storage`.
 

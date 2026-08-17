@@ -31,12 +31,12 @@ Upload any `.js` file via **Settings → Providers → Upload Plugin** — no se
 
 | File                                                                     | ID                      | Name                     | Description                                                                 |
 | ------------------------------------------------------------------------ | ----------------------- | ------------------------ | --------------------------------------------------------------------------- |
-| [indexerr/indexerr.js](indexerr/indexerr.js)                             | `indexerr`              | indexerr                 | Unified torrent search — reads Jackett/Cardigann indexer definitions        |
+| [indexerr/indexerr.js](indexerr/indexerr.js)                             | `indexerr`              | Indexerr                 | Unified torrent search — reads Jackett/Cardigann indexer definitions        |
 | [torrent-search/internet-archive.js](torrent-search/internet-archive.js) | `internet-archive-torrent` | Internet Archive Torrent | Public-domain movies, music, books & software torrents (Archive BitTorrent format only) |
 
-#### indexerr
+#### Indexerr
 
-`indexerr` reemplaza a los plugins individuales de búsqueda de torrents (1337x, EZTV, Nyaa, The Pirate Bay, KickassTorrents, TorrentKitty, TorrentCSV, TorrentClaw, YTS…). En lugar de un plugin por tracker, lee **definiciones de indexers** en formato Cardigann YAML — el mismo formato declarativo que usa [Jackett](https://github.com/Jackett/Jackett) (`src/Jackett.Common/Definitions/*.yml`) — descargadas y actualizadas **una vez al día** en runtime.
+**Indexerr** reemplaza a los plugins individuales de búsqueda de torrents (1337x, EZTV, Nyaa, The Pirate Bay, KickassTorrents, TorrentKitty, TorrentCSV, TorrentClaw, YTS…). En lugar de un plugin por tracker, lee **definiciones de indexers** en formato Cardigann YAML — el mismo formato declarativo que usa [Jackett](https://github.com/Jackett/Jackett) (`src/Jackett.Common/Definitions/*.yml`) — descargadas y actualizadas **una vez al día** en runtime.
 
 Es un **plugin autónomo**: instala sus propias rutas de API (definiciones/instancias) y declara su sección de settings, que el frontend de TransMule renderiza de forma genérica. **No existe código específico de `indexerr` en el core**:
 

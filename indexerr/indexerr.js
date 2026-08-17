@@ -12,6 +12,19 @@ import { randomUUID } from "node:crypto";
 // Estado capturado en install(ctx). Los handlers de rutas y search() lo usan.
 const state = { ctx: null };
 
+// Los 7 trackers legacy que había antes de unificarlos en Indexerr.
+// El botón "Habilitar definiciones públicas" activa estas instancias
+// (ids de indexer en el catálogo Cardigann de Jackett).
+const LEGACY_TRACKERS = [
+  "1337x",
+  "eztv",
+  "nyaasi",
+  "thepiratebay",
+  "kickasstorrents-to",
+  "torrentkitty",
+  "yts",
+];
+
 // ─── Helpers de estado (ctx.storage) ────────────────────────────────────────
 function catalog() {
   return state.ctx?.storage.get("catalog") ?? [];
@@ -49,7 +62,7 @@ async function sync() {
 export default {
   meta: {
     id: "indexerr",
-    name: "indexerr",
+    name: "Indexerr",
     icon: "mdi-magnify",
     pluginType: "torrent-search",
     capability: "cardigann",
@@ -68,15 +81,20 @@ export default {
   },
 
   // search() es el SPI del core para torrent-search: el core solo lo invoca,
-  // sin saber qué hace por dentro.
-  async search(query, limit, extraTrackers) {
-    return state.ctx.cardigann.search(
+  // sin saber qué hace por dentro. `subSource` es el id de la instancia
+  // (tracker_id) cuando el usuario busca una definición concreta.
+  async search(query, limit, extraTrackers, subSource) {
+    let insts = instances().filter((i) => i.enabled !== false && i.tracker_id);
+    if (subSource) insts = insts.filter((i) => i.tracker_id === subSource);
+    const results = await state.ctx.cardigann.search(
       query,
       limit,
       extraTrackers,
-      instances(),
+      insts,
       catalog(),
     );
+    // Identificar cada resultado por su sub-fuente ("indexerr:1337x").
+    return results.map((r) => ({ ...r, source: `indexerr:${r.source}` }));
   },
 
   // Rutas de API instaladas por el plugin (dispatch genérico del core).
@@ -145,6 +163,29 @@ export default {
       return { instance: inst };
     },
 
+    "POST /instances/enable-public": () => {
+      const cat = catalog();
+      const existing = new Set(instances().map((i) => i.tracker_id));
+      const list = instances();
+      let added = 0;
+      for (const id of LEGACY_TRACKERS) {
+        const d = cat.find((c) => c.id === id);
+        if (!d) continue; // tracker no disponible en el catálogo
+        if (existing.has(id)) continue; // ya configurado
+        list.push({
+          id: randomUUID(),
+          tracker_id: d.id,
+          name: d.name,
+          enabled: true,
+          config: {},
+        });
+        existing.add(id);
+        added++;
+      }
+      saveInstances(list);
+      return { ok: true, added };
+    },
+
     "PATCH /instances/:id": ({ params, body }) => {
       const list = instances();
       const idx = list.findIndex((i) => i.id === params.id);
@@ -190,10 +231,20 @@ export default {
     },
   },
 
+  // Sub-fuentes de búsqueda: cada instancia habilitada se muestra como fuente
+  // ("Indexerr-1337x") en los buscadores global y de Transmission.
+  sources: {
+    list: { method: "GET", path: "/instances" },
+    itemsKey: "instances",
+    idField: "tracker_id",
+    labelField: "name",
+    enabledField: "enabled",
+  },
+
   // Descriptor de sección de settings (render genérico en el frontend).
   settings: {
     type: "collection-manager",
-    title: "indexerr",
+    title: "Indexerr",
     description:
       "Configura los indexadores de torrents (definiciones Jackett/Cardigann).",
     toolbar: [
@@ -203,6 +254,14 @@ export default {
         icon: "mdi-refresh",
         method: "POST",
         path: "/definitions/refresh",
+      },
+      {
+        key: "enable-public",
+        label: "Habilitar definiciones públicas",
+        icon: "mdi-check-all",
+        method: "POST",
+        path: "/instances/enable-public",
+        hideWhenEmpty: true,
       },
     ],
     list: {

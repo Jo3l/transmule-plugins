@@ -3,7 +3,7 @@
   "plugins": [
     {
       "id": "indexerr",
-      "name": "indexerr",
+      "name": "Indexerr",
       "version": "1.0.0",
       "pluginType": "torrent-search",
       "icon": "mdi-magnify",
