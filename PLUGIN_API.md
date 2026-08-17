@@ -299,6 +299,80 @@ This renders as a row of compact colored badges below the torrent name, like the
 
 ---
 
+## Plugin installation SPI (v2)
+
+Además de proveer datos, un plugin puede **instalar sus propios elementos** de middleware y de frontend. El core es completamente genérico y no conoce ningún plugin concreto.
+
+```js
+export default {
+  meta: { id, name, icon, pluginType, capability?, ... },
+
+  // (opcional) ciclo de vida: recibe servicios inyectados del core
+  install(ctx) { ... },
+
+  // datos — media: list/detail/cover; torrent-search: search
+  async search(query, limit, extraTrackers) { ... },
+
+  // (opcional) rutas de API instaladas por el plugin
+  routes: {
+    "GET /definitions": (ctx) => ({ ... }),
+    "POST /instances": (ctx) => ({ ... }),
+  },
+
+  // (opcional) descriptor de sección de settings (render genérico en frontend)
+  settings: { type: "collection-manager", ... },
+};
+```
+
+### Servicios inyectados en `install(ctx)`
+
+| Servicio                | Descripción                                                                                       |
+| ----------------------- | ------------------------------------------------------------------------------------------------- |
+| `ctx.storage`           | Almacén JSON clave/valor persistente, aislado por plugin (`get` / `set` / `remove` / `list`)      |
+| `ctx.interval(fn, ms)`  | Registra una tarea recurrente; devuelve una función de cancelación                                 |
+| `ctx.log(...args)`      | Logger con prefijo del plugin                                                                      |
+| `ctx.httpError(code,msg)`| Construye un error HTTP que el dispatch entiende                                                   |
+| `ctx.cardigann`         | (solo si `capability: "cardigann"`) motor genérico de indexers Jackett/Cardigann                   |
+
+### Rutas de API (`routes`)
+
+Cada clave es `"MÉTODO /ruta/:parametro"` y se despacha bajo `/api/plugins/:pluginId/:ruta`. El handler recibe `{ params, query, body, method }` y devuelve JSON, o lanza `ctx.httpError(code, msg)`.
+
+### Sección de settings (`settings`)
+
+El descriptor `{ type: "collection-manager", toolbar, list, item }` lo renderiza el frontend con `CollectionManager` (catálogo de entidades + formulario dinámico por entidad). Ver `indexerr/indexerr.js` como ejemplo.
+
+### Capacidades (`capability`)
+
+Un plugin declara las capacidades del core que necesita (p. ej. `"cardigann"`) y las recibe en `install(ctx)`. El core inyecta la capacidad declarada sin acoplarse al plugin.
+
+---
+
+## indexerr — unified torrent search (autonomous plugin)
+
+`indexerr` reemplaza a los plugins por-tracker. Lee **definiciones de indexers** en formato Cardigann YAML (el mismo formato que Jackett) y las re-sincroniza una vez al día.
+
+- Declara `capability: "cardigann"`; el motor (parser YAML + plantillas + selectores + filtros) vive en el core como **capacidad genérica**, no como código de indexerr.
+- Instala sus propias rutas (definiciones/instancias) y declara su sección de settings.
+- Persiste el catálogo y las instancias en `ctx.storage`.
+
+Rutas instaladas por el plugin (bajo `/api/plugins/indexerr/...`):
+
+```
+GET    /definitions          → lista de indexers + mapa de instancias
+GET    /definitions/:id      → detalle del indexer + esquema de config
+POST   /definitions/refresh  → re-sincronizar definiciones
+GET    /instances            → instancias configuradas
+POST   /instances            → configurar un indexer
+PATCH  /instances/:id        → actualizar (nombre/enabled/config)
+DELETE /instances/:id        → eliminar configuración
+POST   /instances/:id/test   → probar el indexer con la config actual
+```
+
+El bloque `settings:` de cada definición YAML se convierte en el formulario dinámico de configuración (tipos: text/password/checkbox/select/…). Las definiciones (GPL-2.0) se descargan en runtime desde Jackett (`git clone --sparse`) y nunca se distribuyen con TransMule.
+
+---
+
 ## Runtime environment
 
 - Node.js 18+

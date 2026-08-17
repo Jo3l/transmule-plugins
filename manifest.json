@@ -2,76 +2,13 @@
   "name": "TransMule Official Plugins",
   "plugins": [
     {
-      "id": "nyaa",
-      "name": "Nyaa",
+      "id": "indexerr",
+      "name": "indexerr",
       "version": "1.0.0",
       "pluginType": "torrent-search",
-      "icon": "mdi-cat",
-      "description": "Anime and manga torrent index (nyaa.si).",
-      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/nyaa.js"
-    },
-    {
-      "id": "tpb",
-      "name": "The Pirate Bay",
-      "version": "1.0.0",
-      "pluginType": "torrent-search",
-      "icon": "mdi-pirate",
-      "description": "The Pirate Bay torrent index via apibay.org.",
-      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/piratebay.js"
-    },
-    {
-      "id": "yts-search",
-      "name": "YTS",
-      "version": "1.0.0",
-      "pluginType": "torrent-search",
-      "icon": "mdi-filmstrip",
-      "description": "Movie torrents from YTS.mx (high-quality encodes).",
-      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/yts-search.js"
-    },
-    {
-      "id": "1337x",
-      "name": "1337x",
-      "version": "1.1.0",
-      "pluginType": "torrent-search",
-      "icon": "mdi-numeric-1-box",
-      "description": "1337x \u2014 popular public torrent index (movies, TV, games, music).",
-      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/1337x.js"
-    },
-    {
-      "id": "eztv",
-      "name": "EZTV",
-      "version": "1.0.0",
-      "pluginType": "torrent-search",
-      "icon": "mdi-television-play",
-      "description": "TV show torrents from EZTV (eztvx.to).",
-      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/eztv.js"
-    },
-    {
-      "id": "kickasstorrents",
-      "name": "KickassTorrents",
-      "version": "1.0.0",
-      "pluginType": "torrent-search",
-      "icon": "mdi-skull-crossbones",
-      "description": "General torrent index \u2014 KickassTorrents public clone.",
-      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/kickasstorrents.js"
-    },
-    {
-      "id": "torrentkitty",
-      "name": "TorrentKitty",
-      "version": "1.0.0",
-      "pluginType": "torrent-search",
-      "icon": "mdi-cat",
-      "description": "DHT torrent search engine (torrentkitty). No seeder data.",
-      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/torrentkitty.js"
-    },
-    {
-      "id": "torrent-csv",
-      "name": "TorrentCSV",
-      "version": "1.0.0",
-      "pluginType": "torrent-search",
-      "icon": "mdi-database-search",
-      "description": "BitTorrent DHT index with clean JSON API (torrents-csv.ml).",
-      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/torrent-csv.js"
+      "icon": "mdi-magnify",
+      "description": "Búsqueda de torrents unificada — definiciones de indexers estilo Jackett/Cardigann.",
+      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/indexerr/indexerr.js"
     },
     {
       "id": "internet-archive-torrent",
@@ -81,15 +18,6 @@
       "icon": "mdi-archive",
       "description": "Public-domain movies, music, books & software torrents from archive.org (Archive BitTorrent format only).",
       "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/internet-archive.js"
-    },
-    {
-      "id": "torrentclaw",
-      "name": "TorrentClaw",
-      "version": "1.0.0",
-      "pluginType": "torrent-search",
-      "icon": "mdi-shield-check",
-      "description": "TorrentClaw \u2014 30+ sources, TrueSpec quality scores, rich metadata tags.",
-      "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/torrent-search/torrentclaw.js"
     },
     {
       "id": "yts",
@@ -138,7 +66,7 @@
       "pluginType": "media",
       "mediaType": "movies",
       "icon": "mdi-shield-check",
-      "description": "Popular movies from TorrentClaw \u2014 30+ sources, TrueSpec quality scores, rich metadata tags.",
+      "description": "Popular movies from TorrentClaw — 30+ sources, TrueSpec quality scores, rich metadata tags.",
       "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/media/torrentclaw-movies.js"
     },
     {
@@ -148,7 +76,7 @@
       "pluginType": "media",
       "mediaType": "shows",
       "icon": "mdi-shield-check",
-      "description": "Popular TV shows from TorrentClaw \u2014 30+ sources, TrueSpec quality scores, rich metadata tags.",
+      "description": "Popular TV shows from TorrentClaw — 30+ sources, TrueSpec quality scores, rich metadata tags.",
       "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/media/torrentclaw-shows.js"
     },
     {
@@ -158,7 +86,7 @@
       "pluginType": "media",
       "mediaType": "archive",
       "icon": "mdi-archive",
-      "description": "Search all Internet Archive content (movies, audio, books, software, images, data) \u2014 direct download or torrent.",
+      "description": "Search all Internet Archive content (movies, audio, books, software, images, data) — direct download or torrent.",
       "url": "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/media/archive-org.js"
     }
   ]
