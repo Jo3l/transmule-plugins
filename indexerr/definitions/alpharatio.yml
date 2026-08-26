@@ -1,0 +1,107 @@
+---
+# Definición propia para TransMule — autoría original, escrita a mano.
+# Indexer: AlphaRatio (alpharatio) — migrado del indexer C# de Jackett
+# (GazelleTracker) a YAML Cardigann para el motor indexerr.
+# NOTA: este indexer NO tiene YAML oficial en Jackett (solo C#).
+id: alpharatio
+name: AlphaRatio
+description: AlphaRatio (AR) is a Private Torrent Tracker for 0DAY / GENERAL
+language: en-US
+type: private
+encoding: UTF-8
+links:
+  - https://alpharatio.cc/
+caps:
+  categorymappings:
+    - {id: 1, cat: TV, desc: "TvSD"}
+    - {id: 2, cat: TV, desc: "TvHD"}
+    - {id: 3, cat: TV, desc: "TvUHD"}
+    - {id: 4, cat: TV, desc: "TvDVDRip"}
+    - {id: 5, cat: TV, desc: "TvPackSD"}
+    - {id: 6, cat: TV, desc: "TvPackHD"}
+    - {id: 7, cat: TV, desc: "TvPackUHD"}
+    - {id: 8, cat: Movies, desc: "MovieSD"}
+    - {id: 9, cat: Movies, desc: "MovieHD"}
+    - {id: 10, cat: Movies, desc: "MovieUHD"}
+    - {id: 11, cat: Movies, desc: "MoviePackSD"}
+    - {id: 12, cat: Movies, desc: "MoviePackHD"}
+    - {id: 13, cat: Movies, desc: "MoviePackUHD"}
+    - {id: 14, cat: XXX, desc: "MovieXXX"}
+    - {id: 15, cat: Movies, desc: "Bluray"}
+    - {id: 16, cat: TV/Anime, desc: "AnimeSD"}
+    - {id: 17, cat: TV/Anime, desc: "AnimeHD"}
+    - {id: 18, cat: PC/Games, desc: "GamesPC"}
+    - {id: 19, cat: Console, desc: "GamesxBox"}
+    - {id: 20, cat: Console, desc: "GamesPS"}
+    - {id: 21, cat: Console, desc: "GamesNin"}
+    - {id: 22, cat: PC, desc: "AppsWindows"}
+    - {id: 23, cat: PC, desc: "AppsMAC"}
+    - {id: 24, cat: PC, desc: "AppsLinux"}
+    - {id: 25, cat: PC, desc: "AppsMobile"}
+    - {id: 26, cat: XXX, desc: "0dayXXX"}
+    - {id: 27, cat: Books, desc: "eBook"}
+    - {id: 28, cat: Audio, desc: "AudioBook"}
+    - {id: 29, cat: Audio, desc: "Music"}
+    - {id: 30, cat: Other, desc: "Misc"}
+  modes:
+    search: [q]
+    tv-search: [q, season, ep]
+    movie-search: [q, imdbid]
+settings:
+  - name: username
+    type: text
+    label: Username
+    required: true
+  - name: password
+    type: password
+    label: Password
+    required: true
+search:
+  paths:
+    - path: ajax.php
+      method: get
+      response:
+        type: json
+      inputs:
+        action: browse
+        order_by: time
+        order_way: desc
+        searchstr: "{{ .Keywords }}"
+  rows:
+    selector: response.results
+    attribute: torrents
+    multiple: true
+  fields:
+    artist:
+      selector: ..artist
+      filters:
+        - name: html_decode
+    groupname:
+      selector: ..groupName
+      filters:
+        - name: html_decode
+    groupyear:
+      selector: ..groupYear
+    releasetype:
+      selector: ..releaseType
+    torrentid:
+      selector: torrentId
+    title:
+      text: "{{ if and .Result.artist (ne .Result.artist \"\") }}{{ .Result.artist }} - {{ end }}{{ .Result.groupname }}{{ if and .Result.groupyear (ne .Result.groupyear \"0\") }} [{{ .Result.groupyear }}]{{ end }}{{ if and .Result.releasetype (ne .Result.releasetype \"Unknown\") }} [{{ .Result.releasetype }}]{{ end }}"
+    size:
+      selector: size
+    seeders:
+      selector: seeders
+    leechers:
+      selector: leechers
+    date:
+      selector: time
+    download:
+      text: "ajax.php?action=download&id={{ .Result.torrentid }}"
+login:
+  path: login.php
+  method: POST
+  inputs:
+    username: "{{ .Config.username }}"
+    password: "{{ .Config.password }}"
+    keeplogged: "1"

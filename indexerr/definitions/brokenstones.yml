@@ -1,0 +1,83 @@
+---
+# Definición propia para TransMule — autoría original, escrita a mano.
+# Indexer: BrokenStones (brokenstones) — migrado del indexer C# de Jackett
+# (GazelleTracker) a YAML Cardigann para el motor indexerr.
+# NOTA: este indexer NO tiene YAML oficial en Jackett (solo C#).
+id: brokenstones
+name: BrokenStones
+description: Broken Stones is a Private site for MacOS and iOS APPS / GAMES
+language: en-US
+type: private
+encoding: UTF-8
+links:
+  - https://brokenstones.is/
+caps:
+  categorymappings:
+    - {id: 1, cat: PC, desc: "MacOS Apps"}
+    - {id: 2, cat: PC, desc: "MacOS Games"}
+    - {id: 3, cat: PC, desc: "iOS Apps"}
+    - {id: 4, cat: PC, desc: "iOS Games"}
+    - {id: 5, cat: Other, desc: "Graphics"}
+    - {id: 6, cat: Audio, desc: "Audio"}
+    - {id: 7, cat: Other, desc: "Tutorials"}
+    - {id: 8, cat: Other, desc: "Other"}
+  modes:
+    search: [q]
+settings:
+  - name: username
+    type: text
+    label: Username
+    required: true
+  - name: password
+    type: password
+    label: Password
+    required: true
+search:
+  paths:
+    - path: ajax.php
+      method: get
+      response:
+        type: json
+      inputs:
+        action: browse
+        order_by: time
+        order_way: desc
+        searchstr: "{{ .Keywords }}"
+  rows:
+    selector: response.results
+    attribute: torrents
+    multiple: true
+  fields:
+    artist:
+      selector: ..artist
+      filters:
+        - name: html_decode
+    groupname:
+      selector: ..groupName
+      filters:
+        - name: html_decode
+    groupyear:
+      selector: ..groupYear
+    releasetype:
+      selector: ..releaseType
+    torrentid:
+      selector: torrentId
+    title:
+      text: "{{ if and .Result.artist (ne .Result.artist \"\") }}{{ .Result.artist }} - {{ end }}{{ .Result.groupname }}{{ if and .Result.groupyear (ne .Result.groupyear \"0\") }} [{{ .Result.groupyear }}]{{ end }}{{ if and .Result.releasetype (ne .Result.releasetype \"Unknown\") }} [{{ .Result.releasetype }}]{{ end }}"
+    size:
+      selector: size
+    seeders:
+      selector: seeders
+    leechers:
+      selector: leechers
+    date:
+      selector: time
+    download:
+      text: "ajax.php?action=download&id={{ .Result.torrentid }}"
+login:
+  path: login.php
+  method: POST
+  inputs:
+    username: "{{ .Config.username }}"
+    password: "{{ .Config.password }}"
+    keeplogged: "1"

@@ -8,9 +8,20 @@
  * instancias. El core no conoce indexerr: solo inyecta la capacidad declarada.
  */
 import { randomUUID } from "node:crypto";
+import { existsSync, mkdirSync, readdirSync, unlinkSync, writeFileSync } from "node:fs";
+import { join, resolve } from "node:path";
 
 // Estado capturado en install(ctx). Los handlers de rutas y search() lo usan.
 const state = { ctx: null };
+
+// ─── Definiciones propias (origen mixto) ─────────────────────────────────────
+// El catálogo final = definiciones de Jackett (sync en runtime, GPL-2.0) +
+// definiciones NUESTRAS (autoría original, YAML escrito a mano) servidas desde
+// el repo transmule-plugins (`indexerr/definitions/`, manifest.json + .yml).
+// Nunca se bundlean en la imagen: se descargan en runtime como las de Jackett.
+const CUSTOM_DEFS_BASE =
+  "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/indexerr/definitions";
+const CUSTOM_DEFS_DIR = resolve("data", "cardigann-definitions-custom");
 
 // Los 7 trackers legacy que había antes de unificarlos en Indexerr.
 // El botón "Habilitar definiciones públicas" activa estas instancias
@@ -46,17 +57,95 @@ function configSchema(def) {
   }));
 }
 
-/** Sincroniza definiciones desde Jackett y persiste el catálogo. */
+/** Fetch con timeout (definiciones propias desde el repo de plugins). */
+async function fetchText(url) {
+  const resp = await fetch(url, { signal: AbortSignal.timeout(30_000) });
+  if (!resp.ok) throw new Error(`HTTP ${resp.status} ${url}`);
+  return resp.text();
+}
+
+/**
+ * Descarga las definiciones propias (manifest.json + .yml) desde el repo
+ * transmule-plugins y las persiste en disco (mismo patrón que Jackett).
+ * Devuelve las entradas de catálogo con `yml_path` apuntando al cache local.
+ */
+async function syncCustomDefinitions() {
+  const ctx = state.ctx;
+  if (!ctx) return [];
+  let manifest;
+  try {
+    manifest = JSON.parse(await fetchText(`${CUSTOM_DEFS_BASE}/manifest.json`));
+  } catch (err) {
+    ctx.log(
+      `definiciones custom: manifest no disponible (${err?.message ?? err})`,
+    );
+    return [];
+  }
+  if (!Array.isArray(manifest)) return [];
+
+  mkdirSync(CUSTOM_DEFS_DIR, { recursive: true });
+  const catalog = [];
+  const manifestFiles = new Set();
+  for (const entry of manifest) {
+    if (!entry?.file) continue;
+    manifestFiles.add(entry.file);
+    try {
+      const yml = await fetchText(`${CUSTOM_DEFS_BASE}/${entry.file}`);
+      const def = ctx.cardigann.parseDefinition(yml);
+      if (!def.id || !def.name) {
+        ctx.log(`definicion custom '${entry.file}': sin id/name, ignorada`);
+        continue;
+      }
+      writeFileSync(join(CUSTOM_DEFS_DIR, entry.file), yml, "utf8");
+      catalog.push({
+        id: String(def.id),
+        name: def.name,
+        description: def.description ?? null,
+        type: def.type ?? null,
+        language: def.language ?? null,
+        yml_path: join(CUSTOM_DEFS_DIR, entry.file),
+        custom: true, // marca de origen: definición propia de transmule-plugins
+      });
+    } catch (err) {
+      ctx.log(`definicion custom '${entry.file}': ${err?.message ?? err}`);
+    }
+  }
+  // Limpieza: borrar del cache definiciones que ya no están en el manifest.
+  if (existsSync(CUSTOM_DEFS_DIR)) {
+    for (const f of readdirSync(CUSTOM_DEFS_DIR)) {
+      if (f.endsWith(".yml") && !manifestFiles.has(f)) {
+        try {
+          unlinkSync(join(CUSTOM_DEFS_DIR, f));
+        } catch {}
+      }
+    }
+  }
+  return catalog;
+}
+
+/**
+ * Sincroniza las definiciones de Jackett + las propias y persiste el catálogo
+ * MIXTO (origen doble). Si Jackett publicara un YAML con el mismo id que una
+ * definición propia, gana la de Jackett (mantenida upstream); las propias
+ * rellenan los huecos (los 67 indexers que solo existen en C#).
+ */
 async function sync() {
   const ctx = state.ctx;
   if (!ctx) return { synced: 0, freshClone: false };
-  const { synced, freshClone, catalog: cat } =
+  const { synced, freshClone, catalog: jackett } =
     await ctx.cardigann.syncDefinitions();
-  if (synced > 0) ctx.storage.set("catalog", cat);
+  const custom = await syncCustomDefinitions();
+
+  const byId = new Map();
+  for (const d of jackett) byId.set(d.id, d);
+  for (const d of custom) if (!byId.has(d.id)) byId.set(d.id, d);
+  const catalog = [...byId.values()];
+
+  if (catalog.length > 0) ctx.storage.set("catalog", catalog);
   ctx.log(
-    `definiciones sincronizadas: ${synced}${freshClone ? " (clone fresco)" : ""}`,
+    `definiciones sincronizadas: ${jackett.length} jackett + ${custom.length} custom = ${catalog.length}${freshClone ? " (clone fresco)" : ""}`,
   );
-  return { synced, freshClone };
+  return { synced: catalog.length, freshClone };
 }
 
 export default {
@@ -68,7 +157,7 @@ export default {
     capability: "cardigann",
     description:
       "Búsqueda de torrents unificada — definiciones de indexers estilo Jackett/Cardigann.",
-    version: "1.0.0",
+    version: "1.1.0",
     repository:
       "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/manifest.json",
   },
@@ -118,6 +207,7 @@ export default {
           description: d.description,
           type: d.type,
           language: d.language,
+          custom: d.custom === true,
         })),
         instances: instanceMap,
       };
