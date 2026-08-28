@@ -1,0 +1,65 @@
+---
+# Definición propia para TransMule — autoría original, escrita a mano.
+# Indexer: ApacheTorrent (apachetorrent) — migrado del indexer C# de Jackett
+# (PublicBrazilianIndexerBase) a YAML Cardigann para el motor indexerr.
+# NOTA: este indexer NO tiene YAML oficial en Jackett (solo C#).
+# HTML público (sin login): lista → página de detalle → magnet.
+id: apachetorrent
+name: ApacheTorrent
+description: ApacheTorrent is a Public Torrent Tracker for Movies and TV Shows dubbed in Brazilian Portuguese
+language: pt-BR
+type: public
+encoding: UTF-8
+links:
+  - https://apachetorrent.com/
+caps:
+  categorymappings:
+    - {id: filmes, cat: Movies, desc: "Filmes"}
+    - {id: series, cat: TV, desc: "Séries"}
+  modes:
+    search: [q]
+    tv-search: [q, season, ep]
+    movie-search: [q]
+search:
+  paths:
+    - path: index.php
+      method: get
+      inputs:
+        s: "{{ .Keywords }}{{ if .Query.Season }} {{ .Query.Season }}{{ end }}"
+  rows:
+    selector: div.capaname
+  fields:
+    title:
+      selector: a[href^="https://"]
+      attribute: title
+      filters:
+        - name: re_replace
+          args: ["\\s*\\(\\d+(?:\\.\\d+)?\\s*(?:GB|MB)\\)", ""]
+        - name: re_replace
+          args: ["\\s*\\b(?:WEB-DL|BRRip|HDRip|WEBRip|BluRay|Torrent|Download)\\b", ""]
+        - name: re_replace
+          args: ["\\s*\\b(?:Legendado|Leg|Dublado|Dub|[AÁ]udio)\\b", ""]
+        - name: re_replace
+          args: ["\\s*\\[[^\\]]*\\]", ""]
+        - name: re_replace
+          args: ["\\s+", " "]
+        - name: trim
+    resolution:
+      selector: a[href^="https://"]
+      attribute: title
+      filters:
+        - name: re_replace
+          args: ["^.*?(\\d{3,4}p).*$", "$1"]
+    size:
+      text: "{{ if eq .Result.resolution \"2160p\" }}5GB{{ else }}{{ if eq .Result.resolution \"1080p\" }}2.5GB{{ else }}{{ if eq .Result.resolution \"720p\" }}1GB{{ else }}512MB{{ end }}{{ end }}{{ end }}"
+    seeders:
+      text: "1"
+    leechers:
+      text: "0"
+    download:
+      selector: a[href^="https://"]
+      attribute: href
+download:
+  selectors:
+    - selector: a.btn[href^="magnet:?xt"]
+      attribute: href

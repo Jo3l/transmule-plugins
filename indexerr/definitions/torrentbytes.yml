@@ -1,0 +1,103 @@
+---
+# Definición propia para TransMule — autoría original, escrita a mano.
+# Indexer: TorrentBytes (torrentbytes) — migrado del indexer C# de Jackett
+# (IndexerBase) a YAML Cardigann para el motor indexerr.
+# NOTA: este indexer NO tiene YAML oficial en Jackett (solo C#).
+# HTML privado: login takelogin.php + browse.php (tabla).
+id: torrentbytes
+name: TorrentBytes
+description: TorrentBytes is a Private site. A decade old private tracker with a small but active userbase
+language: en-US
+type: private
+encoding: UTF-8
+links:
+  - https://www.torrentbytes.net/
+caps:
+  categorymappings:
+    - {id: 50, cat: Console, desc: "Games/Consoles"}
+    - {id: 42, cat: PC/Games, desc: "Games/Pack"}
+    - {id: 4, cat: PC/Games, desc: "Games/PC"}
+    - {id: 51, cat: PC, desc: "Linux/All"}
+    - {id: 31, cat: Other/Misc, desc: "Misc"}
+    - {id: 20, cat: Movies/DVD, desc: "Movies/DVD-R"}
+    - {id: 12, cat: Movies/BluRay, desc: "Movies/Full Blu-ray"}
+    - {id: 5, cat: Movies/HD, desc: "Movies/HD"}
+    - {id: 40, cat: Movies, desc: "Movies/Pack"}
+    - {id: 19, cat: Movies/SD, desc: "Movies/SD"}
+    - {id: 49, cat: Movies/UHD, desc: "Movies/UHD"}
+    - {id: 25, cat: Audio, desc: "Music/DVDR"}
+    - {id: 48, cat: Audio/Lossless, desc: "Music/Flac"}
+    - {id: 6, cat: Audio/MP3, desc: "Music/MP3"}
+    - {id: 43, cat: Audio, desc: "Music/Pack"}
+    - {id: 34, cat: Audio/Video, desc: "Music/Videos"}
+    - {id: 45, cat: Movies/BluRay, desc: "NonScene/BRrip"}
+    - {id: 46, cat: Movies/HD, desc: "NonScene/x264"}
+    - {id: 44, cat: Movies/SD, desc: "NonScene/Xvid"}
+    - {id: 37, cat: TV/HD, desc: "TV/BRrip"}
+    - {id: 38, cat: TV/HD, desc: "TV/HD"}
+    - {id: 41, cat: TV, desc: "TV/Pack"}
+    - {id: 33, cat: TV/SD, desc: "TV/SD"}
+    - {id: 32, cat: TV/UHD, desc: "TV/UHD"}
+    - {id: 39, cat: XXX, desc: "XXX/HD"}
+    - {id: 24, cat: XXX, desc: "XXX/IMGSET"}
+    - {id: 21, cat: XXX, desc: "XXX/Pack"}
+    - {id: 9, cat: XXX, desc: "XXX/SD"}
+    - {id: 29, cat: XXX, desc: "XXX/Web"}
+  modes:
+    search: [q]
+    tv-search: [q, season, ep]
+    movie-search: [q, imdbid]
+settings:
+  - name: username
+    type: text
+    label: Username
+    required: true
+  - name: password
+    type: password
+    label: Password
+    required: true
+search:
+  paths:
+    - path: browse.php
+      method: get
+      inputs:
+        incldead: "1"
+        search: "{{ .Keywords }}"
+        sc: "1"
+  rows:
+    selector: "table > tbody:has(tr > td.colhead) > tr:not(:has(td.colhead))"
+  fields:
+    title:
+      selector: td:nth-of-type(2) a:nth-of-type(2)
+      filters:
+        - name: trim
+    download:
+      selector: td:nth-of-type(2) a
+      attribute: href
+      filters:
+        - name: re_replace
+          args: ["^download.php\\?id=(\\d+).*$", "download.php?id=$1"]
+    size:
+      selector: td:nth-of-type(7)
+      filters:
+        - name: trim
+    seeders:
+      selector: td:nth-of-type(9)
+      filters:
+        - name: trim
+    leechers:
+      selector: td:nth-of-type(10)
+      filters:
+        - name: trim
+    date:
+      selector: td:nth-of-type(5)
+      filters:
+        - name: trim
+login:
+  path: takelogin.php
+  method: POST
+  inputs:
+    username: "{{ .Config.username }}"
+    password: "{{ .Config.password }}"
+    returnto: "/"
+    login: "Log in!"

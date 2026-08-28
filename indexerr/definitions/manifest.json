@@ -1,7 +1,178 @@
 [
-  { "id": "alpharatio", "file": "alpharatio.yml" },
-  { "id": "redacted", "file": "redacted.yml" },
-  { "id": "orpheus", "file": "orpheus.yml" },
-  { "id": "simurg", "file": "simurg.yml" },
-  { "id": "brokenstones", "file": "brokenstones.yml" }
+  {
+    "id": "alpharatio",
+    "file": "alpharatio.yml"
+  },
+  {
+    "id": "animebytes",
+    "file": "animebytes.yml"
+  },
+  {
+    "id": "animez",
+    "file": "animez.yml"
+  },
+  {
+    "id": "apachetorrent",
+    "file": "apachetorrent.yml"
+  },
+  {
+    "id": "audiobookbay",
+    "file": "audiobookbay.yml"
+  },
+  {
+    "id": "avistaz",
+    "file": "avistaz.yml"
+  },
+  {
+    "id": "beyond-hd-api",
+    "file": "beyondhdapi.yml"
+  },
+  {
+    "id": "bithdtv",
+    "file": "bithdtv.yml"
+  },
+  {
+    "id": "brokenstones",
+    "file": "brokenstones.yml"
+  },
+  {
+    "id": "cinemaz",
+    "file": "cinemaz.yml"
+  },
+  {
+    "id": "desigaane",
+    "file": "desigaane.yml"
+  },
+  {
+    "id": "dicmusic",
+    "file": "dicmusic.yml"
+  },
+  {
+    "id": "exoticaz",
+    "file": "exoticaz.yml"
+  },
+  {
+    "id": "filelist",
+    "file": "filelist.yml"
+  },
+  {
+    "id": "gazellegamesapi",
+    "file": "gazellegamesapi.yml"
+  },
+  {
+    "id": "greatposterwall",
+    "file": "greatposterwall.yml"
+  },
+  {
+    "id": "hdrtorrent",
+    "file": "hdrtorrent.yml"
+  },
+  {
+    "id": "immortalseed",
+    "file": "immortalseed.yml"
+  },
+  {
+    "id": "iptorrents",
+    "file": "iptorrents.yml"
+  },
+  {
+    "id": "knaben",
+    "file": "knaben.yml"
+  },
+  {
+    "id": "magnetico",
+    "file": "magnetico.yml"
+  },
+  {
+    "id": "mejortorrent",
+    "file": "mejortorrent.yml"
+  },
+  {
+    "id": "myanonamouse",
+    "file": "myanonamouse.yml"
+  },
+  {
+    "id": "norbits",
+    "file": "norbits.yml"
+  },
+  {
+    "id": "orpheus",
+    "file": "orpheus.yml"
+  },
+  {
+    "id": "passthepopcorn",
+    "file": "passthepopcorn.yml"
+  },
+  {
+    "id": "pretome",
+    "file": "pretome.yml"
+  },
+  {
+    "id": "privatehd",
+    "file": "privatehd.yml"
+  },
+  {
+    "id": "redacted",
+    "file": "redacted.yml"
+  },
+  {
+    "id": "redetorrent",
+    "file": "redetorrent.yml"
+  },
+  {
+    "id": "retroflix",
+    "file": "retroflix.yml"
+  },
+  {
+    "id": "revopeers",
+    "file": "revopeers.yml"
+  },
+  {
+    "id": "scenehd",
+    "file": "scenehd.yml"
+  },
+  {
+    "id": "secretcinema",
+    "file": "secretcinema.yml"
+  },
+  {
+    "id": "shazbat",
+    "file": "shazbat.yml"
+  },
+  {
+    "id": "simurg",
+    "file": "simurg.yml"
+  },
+  {
+    "id": "speedapp",
+    "file": "speedapp.yml"
+  },
+  {
+    "id": "subsplease",
+    "file": "subsplease.yml"
+  },
+  {
+    "id": "torrentbytes",
+    "file": "torrentbytes.yml"
+  },
+  {
+    "id": "torrentday",
+    "file": "torrentday.yml"
+  },
+  {
+    "id": "torrentnetwork",
+    "file": "torrentnetwork.yml"
+  },
+  {
+    "id": "torrentscsv",
+    "file": "torrentscsv.yml"
+  },
+  {
+    "id": "torrentsyndikat",
+    "file": "torrentsyndikat.yml"
+  },
+  {
+    "id": "xspeeds",
+    "file": "xspeeds.yml"
+  }
 ]

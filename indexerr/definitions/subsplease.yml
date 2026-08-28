@@ -1,0 +1,58 @@
+---
+# Definición propia para TransMule — autoría original, escrita a mano.
+# Indexer: SubsPlease (subsplease) — migrado del indexer C# de Jackett a
+# YAML Cardigann para el motor indexerr.
+# NOTA: este indexer NO tiene YAML oficial en Jackett (solo C#).
+# API JSON pública: {site}api/?tz=UTC&f=search&s=<query> — la respuesta es un
+# OBJETO keyed por página (el motor itera Object.values).
+id: subsplease
+name: SubsPlease
+description: SubsPlease is a Public site. A better anime torrent site for the community
+language: en-US
+type: public
+encoding: UTF-8
+links:
+  - https://subsplease.org/
+caps:
+  categorymappings:
+    - {id: 1, cat: TV/Anime, desc: "Anime"}
+  modes:
+    search: [q]
+    tv-search: [q, season, ep]
+    movie-search: [q]
+settings: []
+search:
+  headers:
+    Accept: application/json
+  paths:
+    - path: api/
+      method: get
+      response:
+        type: json
+      inputs:
+        tz: UTC
+        f: search
+        s: "{{ .Keywords }}"
+  rows:
+    selector: ""
+    attribute: downloads
+    multiple: true
+  fields:
+    show:
+      selector: ..show
+    episode:
+      selector: ..episode
+    res:
+      selector: res
+    title:
+      text: "[SubsPlease] {{ .Result.show }} - {{ .Result.episode }} ({{ .Result.res }}p)"
+    size:
+      text: "{{ if eq .Result.res \"1080\" }}1395864371{{ else }}{{ if eq .Result.res \"720\" }}734003200{{ else }}{{ if eq .Result.res \"480\" }}367001600{{ else }}1073741824{{ end }}{{ end }}{{ end }}"
+    seeders:
+      text: "1"
+    leechers:
+      text: "1"
+    date:
+      selector: ..release_date
+    download:
+      selector: magnet

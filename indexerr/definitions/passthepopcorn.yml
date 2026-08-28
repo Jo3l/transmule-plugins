@@ -1,0 +1,66 @@
+---
+# Definición propia para TransMule — autoría original, escrita a mano.
+# Indexer: PassThePopcorn (passthepopcorn) — migrado del indexer C# de
+# Jackett (IndexerBase) a YAML Cardigann para el motor indexerr.
+# NOTA: este indexer NO tiene YAML oficial en Jackett (solo C#).
+# API JSON con headers ApiUser/ApiKey: torrents.php?action=advanced&json=noredirect
+# La respuesta anida torrents dentro de movies (rows.attribute + multiple).
+id: passthepopcorn
+name: PassThePopcorn
+description: PassThePopcorn (PTP) is a Private site for MOVIES
+language: en-US
+type: private
+encoding: UTF-8
+links:
+  - https://passthepopcorn.me/
+caps:
+  categorymappings:
+    - {id: 1, cat: Movies, desc: "Movies"}
+    - {id: 2, cat: Movies, desc: "Collections"}
+  modes:
+    search: [q]
+    movie-search: [q, imdbid]
+settings:
+  - name: user
+    type: text
+    label: API User
+    required: true
+  - name: key
+    type: password
+    label: API Key
+    required: true
+search:
+  headers:
+    ApiUser: "{{ .Config.user }}"
+    ApiKey: "{{ .Config.key }}"
+  paths:
+    - path: torrents.php
+      method: get
+      response:
+        type: json
+      inputs:
+        action: advanced
+        json: noredirect
+        grouping: "0"
+        order_by: time
+        order_way: desc
+        searchstr: "{{ .Keywords }}"
+  rows:
+    selector: movies
+    attribute: torrents
+    multiple: true
+  fields:
+    torrentid:
+      selector: id
+    title:
+      selector: release_name
+    size:
+      selector: size
+    seeders:
+      selector: seeders
+    leechers:
+      selector: leechers
+    date:
+      selector: upload_time
+    download:
+      text: "torrents.php?action=download&id={{ .Result.torrentid }}"

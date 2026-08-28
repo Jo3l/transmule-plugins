@@ -1,0 +1,82 @@
+---
+# Definición propia para TransMule — autoría original, escrita a mano.
+# Indexer: DICMusic (dicmusic) — migrado del indexer C# de Jackett
+# (GazelleTracker) a YAML Cardigann para el motor indexerr.
+# NOTA: este indexer NO tiene YAML oficial en Jackett (solo C#).
+# El sitio filtra resultados sin el término de búsqueda; el GLOBAL
+# "searchstr" de ajax.php ya lo hace por nosotros.
+id: dicmusic
+name: DICMusic
+description: DICMusic is a CHINESE Private Torrent Tracker for MUSIC
+language: zh-CN
+type: private
+encoding: UTF-8
+links:
+  - https://dicmusic.com/
+legacylinks:
+  - https://dicmusic.club/
+caps:
+  categorymappings:
+    - {id: 1, cat: Audio, desc: "Music"}
+    - {id: 2, cat: PC, desc: "Applications"}
+  modes:
+    search: [q]
+    music-search: [q, artist, album, label, year]
+settings:
+  - name: username
+    type: text
+    label: Username
+    required: true
+  - name: password
+    type: password
+    label: Password
+    required: true
+search:
+  paths:
+    - path: ajax.php
+      method: get
+      response:
+        type: json
+      inputs:
+        action: browse
+        order_by: time
+        order_way: desc
+        searchstr: "{{ .Keywords }}"
+  rows:
+    selector: response.results
+    attribute: torrents
+    multiple: true
+  fields:
+    artist:
+      selector: ..artist
+      filters:
+        - name: html_decode
+    groupname:
+      selector: ..groupName
+      filters:
+        - name: html_decode
+    groupyear:
+      selector: ..groupYear
+    releasetype:
+      selector: ..releaseType
+    torrentid:
+      selector: torrentId
+    title:
+      text: "{{ if and .Result.artist (ne .Result.artist \"\") }}{{ .Result.artist }} - {{ end }}{{ .Result.groupname }}{{ if and .Result.groupyear (ne .Result.groupyear \"0\") }} [{{ .Result.groupyear }}]{{ end }}{{ if and .Result.releasetype (ne .Result.releasetype \"Unknown\") }} [{{ .Result.releasetype }}]{{ end }}"
+    size:
+      selector: size
+    seeders:
+      selector: seeders
+    leechers:
+      selector: leechers
+    date:
+      selector: time
+    download:
+      text: "ajax.php?action=download&id={{ .Result.torrentid }}"
+login:
+  path: login.php
+  method: POST
+  inputs:
+    username: "{{ .Config.username }}"
+    password: "{{ .Config.password }}"
+    keeplogged: "1"

@@ -1,0 +1,70 @@
+---
+# Definición propia para TransMule — autoría original, escrita a mano.
+# Indexer: AnimeBytes (animebytes) — migrado del indexer C# de Jackett
+# (BaseCachingWebIndexer) a YAML Cardigann para el motor indexerr.
+# NOTA: este indexer NO tiene YAML oficial en Jackett (solo C#).
+# API JSON con passkey: scrape.php?torrent_pass=<pk>&searchstr=<q>
+# anidado groups[].torrents[] (rows.attribute + multiple); los campos del
+# grupo se leen con ".." (padre).
+id: animebytes
+name: AnimeBytes
+description: AnimeBytes is a Private site for Anime / Manga / Music
+language: en-US
+type: private
+encoding: UTF-8
+links:
+  - https://animebytes.tv/
+caps:
+  categorymappings:
+    - {id: "anime[tv_series]", cat: TV/Anime, desc: "TV Series"}
+    - {id: "anime[ova]", cat: TV/Anime, desc: "OVA"}
+    - {id: "anime[movie]", cat: Movies, desc: "Movie"}
+    - {id: "audio", cat: Audio, desc: "Music"}
+    - {id: "printedtype[manga]", cat: Books/Comics, desc: "Manga"}
+    - {id: "printedtype[light_novel]", cat: Books/Comics, desc: "Light Novel"}
+    - {id: "gamec[game]", cat: PC/Games, desc: "Game"}
+  modes:
+    search: [q]
+    tv-search: [q, season, ep]
+    movie-search: [q]
+settings:
+  - name: passkey
+    type: password
+    label: Passkey (32/48/56 chars)
+    required: true
+search:
+  paths:
+    - path: scrape.php
+      method: get
+      response:
+        type: json
+      inputs:
+        torrent_pass: "{{ .Config.passkey }}"
+        sort: grouptime
+        way: desc
+        type: anime
+        limit: "50"
+        searchstr: "{{ .Keywords }}"
+  rows:
+    selector: groups
+    attribute: torrents
+    multiple: true
+  fields:
+    series_name:
+      selector: "..series_name"
+    full_name:
+      selector: "..full_name"
+    torrentid:
+      selector: id
+    title:
+      text: "{{ if .Result.series_name }}{{ .Result.series_name }}{{ else }}{{ .Result.full_name }}{{ end }}"
+    download:
+      selector: link
+    size:
+      selector: size
+    seeders:
+      selector: seeders
+    leechers:
+      selector: leechers
+    date:
+      selector: upload_time

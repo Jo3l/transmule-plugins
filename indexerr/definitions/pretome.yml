@@ -1,0 +1,79 @@
+---
+# Definición propia para TransMule — autoría original, escrita a mano.
+# Indexer: PreToMe (pretome) — migrado del indexer C# de Jackett (IndexerBase)
+# a YAML Cardigann para el motor indexerr.
+# NOTA: este indexer NO tiene YAML oficial en Jackett (solo C#).
+# HTML privado: login takelogin.php (usa PIN además de user/pass) + browse.php.
+id: pretome
+name: PreToMe
+description: PreToMe is a Private site for High Quality TV / MOVIES
+language: en-US
+type: private
+encoding: UTF-8
+links:
+  - https://pretome.info/
+caps:
+  categorymappings:
+    - {id: 7, cat: TV/HD, desc: "TV x264"}
+    - {id: 29, cat: TV/HD, desc: "TV h264"}
+    - {id: 19, cat: Movies/HD, desc: "Movies x264"}
+    - {id: 28, cat: Movies/HD, desc: "Movies h264"}
+  modes:
+    search: [q]
+    tv-search: [q, season, ep]
+    movie-search: [q, imdbid]
+settings:
+  - name: username
+    type: text
+    label: Username
+    required: true
+  - name: password
+    type: password
+    label: Password
+    required: true
+  - name: pin
+    type: password
+    label: PIN (el que PreToMe te envió por email)
+    required: true
+search:
+  paths:
+    - path: browse.php
+      method: get
+      inputs:
+        st: "1"
+        search: "{{ .Keywords }}"
+  rows:
+    selector: "table > tbody > tr.browse:has(a[href^=\"details.php?id=\"])"
+  fields:
+    title:
+      selector: a[href^="details.php?id="]
+      attribute: title
+    download:
+      selector: a[href^="download.php"]
+      attribute: href
+      filters:
+        - name: re_replace
+          args: ["^/", ""]
+        - name: prepend
+          args: ["{{ .Config.sitelink }}"]
+    size:
+      selector: td:nth-of-type(8)
+      filters:
+        - name: trim
+    seeders:
+      selector: td:nth-of-type(10)
+      filters:
+        - name: trim
+    leechers:
+      selector: td:nth-of-type(11)
+      filters:
+        - name: trim
+login:
+  path: takelogin.php
+  method: POST
+  inputs:
+    returnto: "%2F"
+    login_pin: "{{ .Config.pin }}"
+    username: "{{ .Config.username }}"
+    password: "{{ .Config.password }}"
+    login: "Login"

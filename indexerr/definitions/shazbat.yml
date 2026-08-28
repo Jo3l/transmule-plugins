@@ -1,0 +1,83 @@
+---
+# Definición propia para TransMule — autoría original, escrita a mano.
+# Indexer: Shazbat (shazbat) — migrado del indexer C# de Jackett (IndexerBase)
+# a YAML Cardigann para el motor indexerr.
+# NOTA: este indexer NO tiene YAML oficial en Jackett (solo C#).
+# Privado: login /login + tabla #torrent-table tr.eprow en /search?search=...
+# (el C# además enriquece con páginas por show; aquí solo el listado directo).
+id: shazbat
+name: Shazbat
+description: Shazbat is a Private site with highly competitive TV rips
+language: en-US
+type: private
+encoding: UTF-8
+links:
+  - https://www.shazbat.tv/
+caps:
+  categorymappings:
+    - {id: 1, cat: TV/HD, desc: "TV HD"}
+    - {id: 2, cat: TV/SD, desc: "TV SD"}
+  modes:
+    search: [q]
+    tv-search: [q, season, ep]
+settings:
+  - name: username
+    type: text
+    label: Username
+    required: true
+  - name: password
+    type: password
+    label: Password
+    required: true
+search:
+  headers:
+    X-Requested-With: XMLHttpRequest
+  paths:
+    - path: search
+      method: get
+      inputs:
+        search: "{{ .Keywords }}"
+        portlet: "true"
+  rows:
+    selector: "#torrent-table tr.eprow"
+  fields:
+    title:
+      selector: td:nth-of-type(3)
+      filters:
+        - name: trim
+    info:
+      selector: td:nth-of-type(4)
+      filters:
+        - name: trim
+    size:
+      selector: td:nth-of-type(4)
+      filters:
+        - name: re_replace
+          args: ["^.*\\((\\d+)\\)\\s*:.*$", "$1"]
+    seeders:
+      selector: td:nth-of-type(4)
+      filters:
+        - name: re_replace
+          args: ["^.*:\\s*(\\d+)\\s*/\\s*:.*$", "$1"]
+    leechers:
+      selector: td:nth-of-type(4)
+      filters:
+        - name: re_replace
+          args: ["^.*:\\s*\\d+\\s*/\\s*:(\\d+)\\s*$", "$1"]
+    download:
+      selector: td:nth-of-type(5) a[href*="load_torrent"]
+      attribute: href
+      filters:
+        - name: re_replace
+          args: ["^/", ""]
+        - name: prepend
+          args: ["{{ .Config.sitelink }}"]
+login:
+  path: login
+  method: POST
+  inputs:
+    referer: ""
+    query: ""
+    tv_timezone: "0"
+    username: "{{ .Config.username }}"
+    password: "{{ .Config.password }}"

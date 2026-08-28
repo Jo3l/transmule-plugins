@@ -1,0 +1,64 @@
+---
+# Definición propia para TransMule — autoría original, escrita a mano.
+# Indexer: Magnetico (magnetico) — migrado del indexer C# de Jackett
+# (IndexerBase) a YAML Cardigann para el motor indexerr.
+# NOTA: este indexer NO tiene YAML oficial en Jackett (solo C#).
+# API JSON local: GET api/v0.1/torrents?query=... con Basic auth; la
+# respuesta es un array; el magnet se construye desde el info_hash.
+id: magnetico
+name: Magnetico (Local DHT)
+description: Magnetico is a self-hosted BitTorrent DHT search engine
+language: en-US
+type: private
+encoding: UTF-8
+links:
+  - http://127.0.0.1:8081/
+caps:
+  categorymappings:
+    - {id: "1", cat: Other, desc: "Other"}
+  modes:
+    search: [q]
+    tv-search: [q, season, ep]
+    movie-search: [q]
+settings:
+  - name: baseUrl
+    type: text
+    label: Base URL
+    default: http://127.0.0.1:8081/
+    required: true
+  - name: username
+    type: text
+    label: Username
+    required: true
+  - name: password
+    type: password
+    label: Password
+    required: true
+search:
+  headers:
+    Authorization: "Basic {{ base64 (join \":\" (list .Config.username .Config.password)) }}"
+  paths:
+    - path: api/v0.1/torrents
+      method: get
+      response:
+        type: json
+      inputs:
+        query: "{{ .Keywords }}"
+        orderBy: relevance
+        ascending: "false"
+        limit: "100"
+  rows:
+    selector: ""
+  fields:
+    title:
+      selector: name
+    infohash:
+      selector: infoHash
+    size:
+      selector: size
+    seeders:
+      text: "1"
+    leechers:
+      text: "0"
+    date:
+      selector: discoveredOn

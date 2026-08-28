@@ -1,0 +1,54 @@
+---
+# Definición propia para TransMule — autoría original, escrita a mano.
+# Indexer: SceneHD (scenehd) — migrado del indexer C# de Jackett
+# (IndexerBase) a YAML Cardigann para el motor indexerr.
+# NOTA: este indexer NO tiene YAML oficial en Jackett (solo C#).
+# JSON con passkey (sin login): browse.php?api=&passkey=...&search=...
+id: scenehd
+name: SceneHD
+description: SceneHD is Private site for HD TV / MOVIES
+language: en-US
+type: private
+encoding: UTF-8
+links:
+  - https://scenehd.org/
+caps:
+  categorymappings:
+    - {id: 1, cat: Movies/HD, desc: "Movies HD"}
+    - {id: 2, cat: TV/HD, desc: "TV HD"}
+  modes:
+    search: [q]
+    tv-search: [q, season, ep]
+    movie-search: [q, imdbid]
+settings:
+  - name: passkey
+    type: password
+    label: Passkey
+    required: true
+search:
+  paths:
+    - path: browse.php
+      method: get
+      response:
+        type: json
+      inputs:
+        api: ""
+        passkey: "{{ .Config.passkey }}"
+        search: "{{ .Keywords }}"
+  rows:
+    selector: ""
+  fields:
+    torrentid:
+      selector: id
+    title:
+      selector: name
+    size:
+      selector: size
+    seeders:
+      selector: seeders
+    leechers:
+      selector: leechers
+    date:
+      selector: added
+    download:
+      text: "download.php?id={{ .Result.torrentid }}&passkey={{ .Config.passkey }}"

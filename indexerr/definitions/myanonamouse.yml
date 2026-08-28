@@ -1,0 +1,69 @@
+---
+# Definición propia para TransMule — autoría original, escrita a mano.
+# Indexer: MyAnonamouse (myanonamouse) — migrado del indexer C# de Jackett
+# (IndexerBase) a YAML Cardigann para el motor indexerr.
+# NOTA: este indexer NO tiene YAML oficial en Jackett (solo C#).
+# JSON con cookie mam_id: tor/js/loadSearchJSONbasic.php?tor[text]=<q>...
+id: myanonamouse
+name: MyAnonamouse
+description: MyAnonamouse is a Private site. Friendliness, Warmth and Sharing
+language: en-US
+type: private
+encoding: UTF-8
+links:
+  - https://www.myanonamouse.net/
+caps:
+  categorymappings:
+    - {id: 1, cat: Audio/Audiobook, desc: "Audiobooks"}
+    - {id: 2, cat: Books, desc: "Ebooks"}
+    - {id: 3, cat: Audio, desc: "Music"}
+    - {id: 4, cat: Other, desc: "Other"}
+  modes:
+    search: [q]
+    book-search: [q]
+    music-search: [q]
+settings:
+  - name: mam_id
+    type: text
+    label: mam_id (de la cookie de tu navegador, sesión logueada)
+    required: true
+search:
+  headers:
+    Accept: application/json
+    Cookie: "mam_id={{ .Config.mam_id }}"
+  paths:
+    - path: tor/js/loadSearchJSONbasic.php
+      method: get
+      response:
+        type: json
+      inputs:
+        "tor[text]": "{{ .Keywords }}"
+        "tor[searchType]": title
+        "tor[srchIn][title]": "true"
+        "tor[srchIn][author]": "true"
+        "tor[srchIn][narrator]": "true"
+        "tor[searchIn]": torrents
+        "tor[sortType]": default
+        "tor[perpage]": "100"
+        "tor[startNumber]": "0"
+        thumbnails: "1"
+        description: "1"
+  rows:
+    selector: data
+  fields:
+    torrentid:
+      selector: id
+    title:
+      selector: title
+      filters:
+        - name: trim
+    size:
+      selector: size
+    seeders:
+      selector: seeders
+    leechers:
+      selector: leechers
+    date:
+      selector: added
+    download:
+      text: "tor/download.php?tid={{ .Result.torrentid }}"

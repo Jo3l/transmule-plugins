@@ -1,0 +1,69 @@
+---
+# Definición propia para TransMule — autoría original, escrita a mano.
+# Indexer: DesiGaane (desigaane) — migrado del indexer C# de Jackett
+# (GazelleTracker) a YAML Cardigann para el motor indexerr.
+# NOTA: este indexer NO tiene YAML oficial en Jackett (solo C#).
+# Autenticación por API key (el sitio no acepta login por password).
+id: desigaane
+name: DesiGaane
+description: DesiGaane is a Private Torrent Tracker for DESI MUSIC
+language: en-US
+type: private
+encoding: UTF-8
+links:
+  - https://desigaane.rocks/
+caps:
+  categorymappings:
+    - {id: 1, cat: Audio, desc: "Music"}
+  modes:
+    search: [q]
+    music-search: [q, artist, album]
+settings:
+  - name: apikey
+    type: password
+    label: API Key
+    required: true
+search:
+  headers:
+    Authorization: "{{ .Config.apikey }}"
+  paths:
+    - path: ajax.php
+      method: get
+      response:
+        type: json
+      inputs:
+        action: browse
+        order_by: time
+        order_way: desc
+        searchstr: "{{ .Keywords }}"
+  rows:
+    selector: response.results
+    attribute: torrents
+    multiple: true
+  fields:
+    artist:
+      selector: ..artist
+      filters:
+        - name: html_decode
+    groupname:
+      selector: ..groupName
+      filters:
+        - name: html_decode
+    groupyear:
+      selector: ..groupYear
+    releasetype:
+      selector: ..releaseType
+    torrentid:
+      selector: torrentId
+    title:
+      text: "{{ if and .Result.artist (ne .Result.artist \"\") }}{{ .Result.artist }} - {{ end }}{{ .Result.groupname }}{{ if and .Result.groupyear (ne .Result.groupyear \"0\") }} [{{ .Result.groupyear }}]{{ end }}{{ if and .Result.releasetype (ne .Result.releasetype \"Unknown\") }} [{{ .Result.releasetype }}]{{ end }}"
+    size:
+      selector: size
+    seeders:
+      selector: seeders
+    leechers:
+      selector: leechers
+    date:
+      selector: time
+    download:
+      text: "ajax.php?action=download&id={{ .Result.torrentid }}"

@@ -1,0 +1,64 @@
+---
+# Definición propia para TransMule — autoría original, escrita a mano.
+# Indexer: Knaben (knaben) — migrado del indexer C# de Jackett (IndexerBase)
+# a YAML Cardigann para el motor indexerr.
+# NOTA: este indexer NO tiene YAML oficial en Jackett (solo C#).
+# Meta-search público: POST JSON api.knaben.org/v1 → {hits:[...]}.
+id: knaben
+name: Knaben
+description: Knaben is a Public torrent meta-search engine
+language: en-US
+type: public
+encoding: UTF-8
+links:
+  - https://knaben.org/
+caps:
+  categorymappings:
+    - {id: 1, cat: Movies, desc: "Movies"}
+    - {id: 2, cat: TV, desc: "TV"}
+    - {id: 3, cat: Audio, desc: "Music"}
+    - {id: 4, cat: PC, desc: "Applications"}
+    - {id: 5, cat: Console, desc: "Games"}
+    - {id: 6, cat: Other, desc: "Other"}
+  modes:
+    search: [q]
+    tv-search: [q, season, ep]
+    movie-search: [q]
+    music-search: [q]
+    book-search: [q]
+settings: []
+search:
+  headers:
+    Accept: application/json
+    Content-Type: application/json
+  paths:
+    - path: https://api.knaben.org/v1
+      method: post
+      response:
+        type: json
+      inputs:
+        order_by: date
+        order_direction: desc
+        from: "0"
+        size: "100"
+        hide_unsafe: "true"
+        search_type: "100%"
+        search_field: title
+        query: "{{ .Keywords }}"
+  rows:
+    selector: hits
+  fields:
+    title:
+      selector: title
+    size:
+      selector: bytes
+    seeders:
+      selector: seeders
+    leechers:
+      selector: peers
+    date:
+      selector: date
+    infohash:
+      selector: hash
+    download:
+      selector: link

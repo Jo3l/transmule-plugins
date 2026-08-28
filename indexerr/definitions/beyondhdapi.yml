@@ -1,0 +1,61 @@
+---
+# Definición propia para TransMule — autoría original, escrita a mano.
+# Indexer: Beyond-HD API (beyond-hd-api) — migrado del indexer C# de Jackett
+# (IndexerBase) a YAML Cardigann para el motor indexerr.
+# NOTA: este indexer NO tiene YAML oficial en Jackett (solo C#).
+# API JSON: POST api/torrents/{apiKey} con body {action:"search",rsskey,...}.
+id: beyond-hd-api
+name: Beyond-HD (API)
+description: Beyond-HD is a Private site. Without BeyondHD, your HDTV is just a TV
+language: en-US
+type: private
+encoding: UTF-8
+links:
+  - https://beyond-hd.me/
+caps:
+  categorymappings:
+    - {id: 1, cat: Movies/HD, desc: "Movies"}
+    - {id: 2, cat: TV/HD, desc: "TV"}
+  modes:
+    search: [q]
+    tv-search: [q, season, ep]
+    movie-search: [q, imdbid]
+settings:
+  - name: apiKey
+    type: password
+    label: API Key
+    required: true
+  - name: rsskey
+    type: password
+    label: RSS Key
+    required: true
+search:
+  headers:
+    Accept: application/json
+    Content-Type: application/json
+  paths:
+    - path: "api/torrents/{{ .Config.apiKey }}"
+      method: post
+      response:
+        type: json
+      inputs:
+        action: search
+        rsskey: "{{ .Config.rsskey }}"
+        search: "{{ .Keywords }}"
+  rows:
+    selector: results
+  fields:
+    title:
+      selector: name
+    size:
+      selector: size
+    seeders:
+      selector: seeders
+    leechers:
+      selector: leechers
+    date:
+      selector: created_at
+    infohash:
+      selector: info_hash
+    download:
+      selector: download_url

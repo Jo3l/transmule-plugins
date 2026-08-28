@@ -1,0 +1,83 @@
+---
+# Definición propia para TransMule — autoría original, escrita a mano.
+# Indexer: GreatPosterWall (greatposterwall) — migrado del indexer C# de
+# Jackett (GazelleTracker) a YAML Cardigann para el motor indexerr.
+# NOTA: este indexer NO tiene YAML oficial en Jackett (solo C#).
+# El C# construye el título como "groupName [year] codec / source /
+# resolution / container / processing" (solo flags presentes).
+id: greatposterwall
+name: GreatPosterWall
+description: GreatPosterWall (GPW) is a CHINESE Private site for MOVIES
+language: zh-CN
+type: private
+encoding: UTF-8
+links:
+  - https://greatposterwall.com/
+caps:
+  categorymappings:
+    - {id: 1, cat: Movies, desc: "Movies 电影"}
+  modes:
+    search: [q]
+    movie-search: [q, imdbid]
+settings:
+  - name: username
+    type: text
+    label: Username
+    required: true
+  - name: password
+    type: password
+    label: Password
+    required: true
+search:
+  paths:
+    - path: ajax.php
+      method: get
+      response:
+        type: json
+      inputs:
+        action: browse
+        order_by: time
+        order_way: desc
+        searchstr: "{{ .Keywords }}"
+  rows:
+    selector: response.results
+    attribute: torrents
+    multiple: true
+  fields:
+    groupname:
+      selector: ..groupName
+      filters:
+        - name: html_decode
+    groupyear:
+      selector: ..groupYear
+    codec:
+      selector: codec
+    source:
+      selector: source
+    resolution:
+      selector: resolution
+    container:
+      selector: container
+    processing:
+      selector: processing
+    torrentid:
+      selector: torrentId
+    title:
+      text: "{{ .Result.groupname }}{{ if and .Result.groupyear (ne .Result.groupyear \"0\") }} [{{ .Result.groupyear }}]{{ end }}{{ if .Result.codec }} {{ .Result.codec }}{{ end }}{{ if .Result.source }} / {{ .Result.source }}{{ end }}{{ if .Result.resolution }} / {{ .Result.resolution }}{{ end }}{{ if .Result.container }} / {{ .Result.container }}{{ end }}{{ if .Result.processing }} / {{ .Result.processing }}{{ end }}"
+    size:
+      selector: size
+    seeders:
+      selector: seeders
+    leechers:
+      selector: leechers
+    date:
+      selector: time
+    download:
+      text: "ajax.php?action=download&id={{ .Result.torrentid }}"
+login:
+  path: login.php
+  method: POST
+  inputs:
+    username: "{{ .Config.username }}"
+    password: "{{ .Config.password }}"
+    keeplogged: "1"

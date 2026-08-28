@@ -1,0 +1,80 @@
+---
+# Definición propia para TransMule — autoría original, escrita a mano.
+# Indexer: Torrent-Syndikat (torrentsyndikat) — migrado del indexer C# de
+# Jackett (IndexerBase) a YAML Cardigann para el motor indexerr.
+# NOTA: este indexer NO tiene YAML oficial en Jackett (solo C#).
+# API JSON con API key: api_<hash>/v1/browse.php?apikey=...&searchstring=...
+id: torrentsyndikat
+name: Torrent-Syndikat
+description: Torrent-Syndikat is a GERMAN Private general tracker
+language: de-DE
+type: private
+encoding: UTF-8
+links:
+  - https://torrent-syndikat.org/
+caps:
+  categorymappings:
+    - {id: 42, cat: Movies/UHD, desc: "Filme / 2160p"}
+    - {id: 9, cat: Movies/HD, desc: "Filme / 1080p"}
+    - {id: 20, cat: Movies/HD, desc: "Filme / 720p"}
+    - {id: 10, cat: Movies/SD, desc: "Filme / SD"}
+    - {id: 43, cat: TV/UHD, desc: "Serien / 2160p"}
+    - {id: 53, cat: TV/HD, desc: "Serien / 1080p"}
+    - {id: 54, cat: TV/HD, desc: "Serien / 720p"}
+    - {id: 15, cat: TV/SD, desc: "Serien / SD"}
+    - {id: 30, cat: TV/Sport, desc: "Serien / Sport"}
+    - {id: 44, cat: TV/UHD, desc: "Serienpacks / 2160p"}
+    - {id: 55, cat: TV/HD, desc: "Serienpacks / 1080p"}
+    - {id: 56, cat: TV/HD, desc: "Serienpacks / 720p"}
+    - {id: 27, cat: TV/SD, desc: "Serienpacks / SD"}
+    - {id: 24, cat: Audio/Lossless, desc: "Audio / Musik / FLAC"}
+    - {id: 25, cat: Audio/MP3, desc: "Audio / Musik / MP3"}
+    - {id: 35, cat: Audio, desc: "Audio / Other"}
+    - {id: 18, cat: Audio/Audiobook, desc: "Audio / aBooks"}
+    - {id: 33, cat: Audio/Video, desc: "Audio / Videos"}
+    - {id: 17, cat: Books, desc: "Misc / eBooks"}
+    - {id: 5, cat: PC/Mobile, desc: "Misc / Mobile"}
+    - {id: 39, cat: Other, desc: "Misc / Bildung"}
+    - {id: 36, cat: TV/Foreign, desc: "Englisch / Serien"}
+    - {id: 57, cat: TV/Foreign, desc: "Englisch / Serienpacks"}
+    - {id: 37, cat: Movies/Foreign, desc: "Englisch / Filme"}
+    - {id: 47, cat: Books, desc: "Englisch / eBooks"}
+    - {id: 48, cat: Other, desc: "Englisch / Bildung"}
+    - {id: 49, cat: TV/Sport, desc: "Englisch / Sport"}
+  modes:
+    search: [q]
+    tv-search: [q, season, ep]
+    movie-search: [q, imdbid]
+settings:
+  - name: apikey
+    type: password
+    label: API Key (de keymgm/keys.php, scopes download+browse)
+    required: true
+search:
+  paths:
+    - path: api_9djWe8Tb2NE3p6opyqnh/v1/browse.php
+      method: get
+      response:
+        type: json
+      inputs:
+        apikey: "{{ .Config.apikey }}"
+        limit: "50"
+        ponly: "false"
+        searchstring: "{{ .Keywords }}"
+  rows:
+    selector: rows
+  fields:
+    torrentid:
+      selector: id
+    title:
+      selector: name
+    size:
+      selector: size
+    seeders:
+      selector: seeders
+    leechers:
+      selector: leechers
+    date:
+      selector: added
+    download:
+      text: "download.php?id={{ .Result.torrentid }}"

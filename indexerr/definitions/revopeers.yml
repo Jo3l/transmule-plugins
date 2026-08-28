@@ -1,0 +1,106 @@
+---
+# Definición propia para TransMule — autoría original, escrita a mano.
+# Indexer: RevoPeers (revopeers) — migrado del indexer C# de Jackett
+# (IndexerBase) a YAML Cardigann para el motor indexerr.
+# NOTA: este indexer NO tiene YAML oficial en Jackett (solo C#).
+# HTML privado: login takelogin.php + browse.php (tabla torrents-table).
+id: revopeers
+name: RevoPeers
+description: RevoPeers is a Private PAY2DL Torrent Tracker for MOVIES / TV / GENERAL
+language: en-US
+type: private
+encoding: UTF-8
+links:
+  - https://revopeers.com/
+caps:
+  categorymappings:
+    - {id: "23", cat: TV/Anime, desc: "Anime"}
+    - {id: "2", cat: PC/Mac, desc: "Appz-Mac/Linux"}
+    - {id: "1", cat: PC, desc: "Appz-Win/PC"}
+    - {id: "22", cat: Audio/Audiobook, desc: "Books-Audio"}
+    - {id: "36", cat: Books, desc: "Book-Ebook"}
+    - {id: "40", cat: Console, desc: "Games-Nintendo"}
+    - {id: "16", cat: Console, desc: "Games-PS"}
+    - {id: "4", cat: PC/Games, desc: "Games-Win"}
+    - {id: "39", cat: Console, desc: "Games-Xbox360"}
+    - {id: "35", cat: Console, desc: "Handheld/NDS"}
+    - {id: "34", cat: PC/Mobile, desc: "Mobile"}
+    - {id: "51", cat: Movies/UHD, desc: "Movies/4K"}
+    - {id: "10", cat: Movies/BluRay, desc: "Movies/BluRay"}
+    - {id: "20", cat: Movies/DVD, desc: "Movies/DVDR"}
+    - {id: "12", cat: Movies/HD, desc: "Movies/HDx264"}
+    - {id: "44", cat: Movies, desc: "Movies/Packs"}
+    - {id: "11", cat: Movies/HD, desc: "Movies/x265"}
+    - {id: "19", cat: Movies/SD, desc: "Movies/XviD"}
+    - {id: "6", cat: Audio, desc: "Music"}
+    - {id: "8", cat: Audio/Lossless, desc: "Music/FLAC"}
+    - {id: "46", cat: Audio, desc: "Music/Packs"}
+    - {id: "29", cat: Audio/Video, desc: "MusicVideos"}
+    - {id: "21", cat: TV/Sport, desc: "Sports"}
+    - {id: "70", cat: TV/UHD, desc: "TV/4K"}
+    - {id: "43", cat: TV, desc: "TV/DVDR"}
+    - {id: "42", cat: TV/HD, desc: "TV/HDx264"}
+    - {id: "45", cat: TV, desc: "TV/Packs"}
+    - {id: "41", cat: TV/SD, desc: "TV/SDx264"}
+    - {id: "52", cat: TV/HD, desc: "TV/x265"}
+    - {id: "7", cat: TV/SD, desc: "TV/XViD"}
+    - {id: "9", cat: XXX, desc: "XXX"}
+    - {id: "49", cat: XXX, desc: "XXX/0DAY"}
+    - {id: "47", cat: XXX/DVD, desc: "XXX/DVDR"}
+    - {id: "48", cat: XXX, desc: "XXX/HDx264"}
+  modes:
+    search: [q]
+    tv-search: [q, season, ep]
+    movie-search: [q, imdbid]
+settings:
+  - name: username
+    type: text
+    label: Username
+    required: true
+  - name: password
+    type: password
+    label: Password
+    required: true
+search:
+  paths:
+    - path: browse.php
+      method: get
+      inputs:
+        incldead: "1"
+        titleonly: "1"
+        search: "{{ .Keywords }}"
+  rows:
+    selector: "#torrents-table > tbody > tr:has(td:nth-child(4) > a)"
+  fields:
+    title:
+      selector: .br_right > a b
+      filters:
+        - name: re_replace
+          args: ["^\\[REQ\\]\\s*", ""]
+    download:
+      selector: td:nth-child(4) > a
+      attribute: href
+    size:
+      selector: td:nth-child(7)
+      filters:
+        - name: re_replace
+          args: ["\\s*\\d+\\s*\\w+\\s*$", ""]
+        - name: trim
+    seeders:
+      selector: td:nth-child(9)
+      filters:
+        - name: trim
+    leechers:
+      selector: td:nth-child(10)
+      filters:
+        - name: trim
+    date:
+      selector: td:nth-child(6) nobr
+      filters:
+        - name: trim
+login:
+  path: takelogin.php
+  method: POST
+  inputs:
+    username: "{{ .Config.username }}"
+    password: "{{ .Config.password }}"

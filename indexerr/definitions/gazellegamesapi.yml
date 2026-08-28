@@ -1,0 +1,71 @@
+---
+# Definición propia para TransMule — autoría original, escrita a mano.
+# Indexer: GazelleGames API (gazellegamesapi) — migrado del indexer C# de
+# Jackett (GazelleTracker override) a YAML Cardigann para el motor indexerr.
+# NOTA: este indexer NO tiene YAML oficial en Jackett (solo C#).
+# API JSON: api.php?action=browse&searchstr=<q>; la respuesta es
+# {response: {<groupId>: {year, Torrents: {<torrentId>: {...}}}}}
+# → doble objeto anidado (resuelto con Object.values del motor en ambos niveles).
+id: gazellegamesapi
+name: GazelleGames (API)
+description: GazelleGames (GGn) is a Private site for GAMES
+language: en-US
+type: private
+encoding: UTF-8
+links:
+  - https://gazellegames.net/
+caps:
+  categorymappings:
+    - {id: 1, cat: PC/Games, desc: "Games"}
+    - {id: 2, cat: PC, desc: "Applications"}
+    - {id: 3, cat: Console, desc: "Console"}
+  modes:
+    search: [q]
+    tv-search: [q, season, ep]
+    movie-search: [q, imdbid]
+settings:
+  - name: username
+    type: text
+    label: Username
+    required: true
+  - name: password
+    type: password
+    label: Password
+    required: true
+search:
+  paths:
+    - path: api.php
+      method: get
+      response:
+        type: json
+      inputs:
+        action: browse
+        searchstr: "{{ .Keywords }}"
+  rows:
+    selector: response
+    attribute: Torrents
+    multiple: true
+  fields:
+    groupyear:
+      selector: "..year"
+    release_title:
+      selector: ReleaseTitle
+    torrentid:
+      selector: ID
+    title:
+      text: "{{ .Result.release_title }}{{ if .Result.groupyear }} ({{ .Result.groupyear }}){{ end }}"
+    download:
+      selector: Link
+      filters:
+        - name: re_replace
+          args: ["^/", ""]
+        - name: prepend
+          args: ["{{ .Config.sitelink }}"]
+    size:
+      selector: Size
+    seeders:
+      selector: Seeders
+    leechers:
+      selector: Leechers
+    date:
+      selector: Time

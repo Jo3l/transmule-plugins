@@ -157,7 +157,7 @@ export default {
     capability: "cardigann",
     description:
       "Búsqueda de torrents unificada — definiciones de indexers estilo Jackett/Cardigann.",
-    version: "1.1.0",
+    version: "1.2.0",
     repository:
       "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/manifest.json",
   },

@@ -1,0 +1,82 @@
+---
+# Definición propia para TransMule — autoría original, escrita a mano.
+# Indexer: NorBits (norbits) — migrado del indexer C# de Jackett
+# (BaseCachingWebIndexer) a YAML Cardigann para el motor indexerr.
+# NOTA: este indexer NO tiene YAML oficial en Jackett (solo C#).
+# HTML privado: login takelogin.php (opcional 2FA code) + browse.php.
+id: norbits
+name: NorBits
+description: NorBits is a Private site for MOVIES / TV / GENERAL
+language: en-US
+type: private
+encoding: UTF-8
+links:
+  - https://norbits.net/
+caps:
+  categorymappings:
+    - {id: 1, cat: Movies, desc: "Movies"}
+    - {id: 2, cat: TV, desc: "TV"}
+    - {id: 3, cat: Audio, desc: "Music"}
+    - {id: 4, cat: PC, desc: "Apps"}
+    - {id: 5, cat: PC/Games, desc: "Games"}
+  modes:
+    search: [q]
+    tv-search: [q, season, ep]
+    movie-search: [q, imdbid]
+settings:
+  - name: username
+    type: text
+    label: Username
+    required: true
+  - name: password
+    type: password
+    label: Password
+    required: true
+  - name: twofactor
+    type: text
+    label: 2FA code (si la tienes activada)
+    required: false
+search:
+  paths:
+    - path: browse.php
+      method: get
+      inputs:
+        incldead: "1"
+        fullsearch: "0"
+        scenerelease: "0"
+        search: "{{ .Keywords }}"
+  rows:
+    selector: "#torrentTable > tbody > tr:has(td:nth-of-type(2) > a[href*=\"details.php?id=\"])"
+  fields:
+    title:
+      selector: td:nth-of-type(2) > a[href*="details.php?id="]
+      attribute: title
+    download:
+      selector: td:nth-of-type(2) > a[href*="download.php?id="]
+      attribute: href
+      filters:
+        - name: re_replace
+          args: ["^/", ""]
+        - name: prepend
+          args: ["{{ .Config.sitelink }}"]
+    size:
+      selector: td:nth-of-type(7)
+      filters:
+        - name: trim
+    seeders:
+      selector: td:nth-of-type(9)
+      filters:
+        - name: trim
+    leechers:
+      selector: td:nth-of-type(10)
+      filters:
+        - name: trim
+login:
+  path: takelogin.php
+  method: POST
+  inputs:
+    username: "{{ .Config.username }}"
+    password: "{{ .Config.password }}"
+    logout: "no"
+    returnto: "/"
+    code: "{{ .Config.twofactor }}"

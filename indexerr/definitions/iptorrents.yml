@@ -1,0 +1,104 @@
+---
+# Definición propia para TransMule — autoría original, escrita a mano.
+# Indexer: IPTorrents (iptorrents) — migrado del indexer C# de Jackett
+# (IndexerBase) a YAML Cardigann para el motor indexerr.
+# NOTA: este indexer NO tiene YAML oficial en Jackett (solo C#).
+# HTML privado con COOKIE (no login por password): /t?...; columnas de la tabla
+# asumidas en el orden por defecto (size col 6, seeders col 7, leechers col 8).
+id: iptorrents
+name: IPTorrents
+description: IPTorrents is a Private site. Always a step ahead.
+language: en-US
+type: private
+encoding: UTF-8
+links:
+  - https://iptorrents.com/
+caps:
+  categorymappings:
+    - {id: 77, cat: Movies/HD, desc: "Movie/720p"}
+    - {id: 72, cat: Movies/BluRay, desc: "Movie/BD-R"}
+    - {id: 6, cat: Movies/DVD, desc: "Movie/DVD-R"}
+    - {id: 62, cat: Movies/HD, desc: "Movie/HD"}
+    - {id: 38, cat: Movies/Foreign, desc: "Movie/Non-English"}
+    - {id: 68, cat: Movies, desc: "Movie/Packs"}
+    - {id: 20, cat: Movies, desc: "Movie/Web-DL"}
+    - {id: 100, cat: Movies/HD, desc: "Movie/x265"}
+    - {id: 7, cat: Movies/SD, desc: "Movie/Xvid"}
+    - {id: 73, cat: TV, desc: "TV"}
+    - {id: 26, cat: TV/Documentary, desc: "TV/Documentaries"}
+    - {id: 55, cat: TV/Sport, desc: "Sports"}
+    - {id: 78, cat: TV/SD, desc: "TV/480p"}
+    - {id: 23, cat: TV/HD, desc: "TV/BD"}
+    - {id: 24, cat: TV/SD, desc: "TV/DVD-R"}
+    - {id: 25, cat: TV/SD, desc: "TV/DVD-Rip"}
+    - {id: 66, cat: TV/SD, desc: "TV/Mobile"}
+    - {id: 82, cat: TV/Foreign, desc: "TV/Non-English"}
+    - {id: 65, cat: TV, desc: "TV/Packs"}
+    - {id: 79, cat: TV/SD, desc: "TV/SD/x264"}
+    - {id: 22, cat: TV, desc: "TV/Web-DL"}
+    - {id: 5, cat: TV/HD, desc: "TV/x264"}
+    - {id: 99, cat: TV/HD, desc: "TV/x265"}
+    - {id: 4, cat: TV/SD, desc: "TV/Xvid"}
+    - {id: 74, cat: Console, desc: "Games"}
+    - {id: 43, cat: PC/Games, desc: "Games/PC-ISO"}
+    - {id: 45, cat: PC/Games, desc: "Games/PC-Rip"}
+    - {id: 75, cat: Audio, desc: "Music"}
+    - {id: 3, cat: Audio/MP3, desc: "Music/Audio"}
+    - {id: 80, cat: Audio/Lossless, desc: "Music/Flac"}
+    - {id: 76, cat: Other, desc: "Miscellaneous"}
+    - {id: 60, cat: TV/Anime, desc: "Anime"}
+    - {id: 1, cat: PC/0day, desc: "Appz"}
+    - {id: 64, cat: Audio/Audiobook, desc: "AudioBook"}
+    - {id: 35, cat: Books, desc: "Books"}
+    - {id: 94, cat: Books/Comics, desc: "Comics"}
+    - {id: 92, cat: Books/Mags, desc: "Magazines / Newspapers"}
+    - {id: 36, cat: Other, desc: "Pics/Wallpapers"}
+    - {id: 88, cat: XXX, desc: "XXX"}
+    - {id: 8, cat: XXX, desc: "XXX/Movie"}
+  modes:
+    search: [q]
+    tv-search: [q, season, ep]
+    movie-search: [q, imdbid]
+settings:
+  - name: cookie
+    type: text
+    label: Cookie (de tu navegador, sesión logueada)
+    required: true
+search:
+  headers:
+    Cookie: "{{ .Config.cookie }}"
+  paths:
+    - path: t
+      method: get
+      inputs:
+        q: "+{{ .Keywords }}"
+        o: seeders
+  rows:
+    selector: table[id="torrents"] > tbody > tr:has(a.hv)
+  fields:
+    title:
+      selector: a.hv
+      filters:
+        - name: re_replace
+          args: ["[\\(\\[\\{]REQ(UEST(ED)?)?[\\)\\]\\}]", ""]
+        - name: trim
+    download:
+      selector: a[href^="/download.php/"]
+      attribute: href
+      filters:
+        - name: re_replace
+          args: ["^/", ""]
+        - name: prepend
+          args: ["{{ .Config.sitelink }}"]
+    size:
+      selector: td:nth-of-type(6)
+      filters:
+        - name: trim
+    seeders:
+      selector: td:nth-of-type(8)
+      filters:
+        - name: trim
+    leechers:
+      selector: td:nth-of-type(9)
+      filters:
+        - name: trim

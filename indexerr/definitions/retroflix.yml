@@ -1,0 +1,81 @@
+---
+# Definición propia para TransMule — autoría original, escrita a mano.
+# Indexer: RetroFlix (retroflix) — migrado del indexer C# de Jackett
+# (SpeedAppTracker) a YAML Cardigann para el motor indexerr.
+# NOTA: este indexer NO tiene YAML oficial en Jackett (solo C#).
+# API JSON: POST /api/login {username,password} → {token}; las búsquedas
+# van con header Authorization: Bearer <token>; la respuesta es un array.
+id: retroflix
+name: RetroFlix
+description: RetroFlix is a Private site for Classic Movies / TV / General Releases
+language: en-US
+type: private
+encoding: UTF-8
+links:
+  - https://retroflix.net/
+caps:
+  categorymappings:
+    - {id: 401, cat: Movies, desc: "Movies"}
+    - {id: 402, cat: TV, desc: "TV Series"}
+    - {id: 406, cat: Audio/Video, desc: "Music Videos"}
+    - {id: 407, cat: TV/Sport, desc: "Sports"}
+    - {id: 409, cat: Books, desc: "Books"}
+  modes:
+    search: [q]
+    tv-search: [q, season, ep]
+    movie-search: [q, imdbid]
+settings:
+  - name: username
+    type: text
+    label: Email
+    required: true
+  - name: password
+    type: password
+    label: Password
+    required: true
+search:
+  headers:
+    Authorization: "Bearer {{ .Token }}"
+  paths:
+    - path: api/torrent
+      method: get
+      response:
+        type: json
+      inputs:
+        itemsPerPage: "100"
+        includingDead: "1"
+        sort: torrent.createdAt
+        direction: desc
+        search: "{{ .Keywords }}"
+  rows:
+    selector: ""
+  fields:
+    title:
+      selector: name
+      filters:
+        - name: re_replace
+          args: ["\\[REQUEST(ED)?\\]", ""]
+        - name: trim
+    torrentid:
+      selector: id
+    size:
+      selector: size
+    seeders:
+      selector: seeders
+    leechers:
+      selector: leechers
+    date:
+      selector: created_at
+    download:
+      text: "/api/torrent/{{ .Result.torrentid }}/download"
+login:
+  path: api/login
+  method: POST
+  headers:
+    Accept: application/json
+    Content-Type: application/json
+  inputs:
+    username: "{{ .Config.username }}"
+    password: "{{ .Config.password }}"
+  response:
+    tokenPath: token

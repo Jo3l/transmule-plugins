@@ -1,0 +1,81 @@
+---
+# Definición propia para TransMule — autoría original, escrita a mano.
+# Indexer: CinemaZ (cinemaz) — migrado del indexer C# de Jackett
+# (AvistazTracker) a YAML Cardigann para el motor indexerr.
+# NOTA: este indexer NO tiene YAML oficial en Jackett (solo C#).
+# API JSON: POST /api/v1/jackett/auth {username,password,pid} → {token};
+# las búsquedas van con header Authorization: Bearer <token>.
+id: cinemaz
+name: CinemaZ
+description: CinemaZ (EuTorrents) is a Private Torrent Tracker for FOREIGN NON-ASIAN MOVIES
+language: en-US
+type: private
+encoding: UTF-8
+links:
+  - https://cinemaz.to/
+caps:
+  categorymappings:
+    - {id: 1, cat: Movies, desc: "Movies"}
+    - {id: 2, cat: TV, desc: "TV"}
+    - {id: 3, cat: Audio, desc: "Music"}
+  modes:
+    search: [q]
+    tv-search: [q, season, ep]
+    movie-search: [q, imdbid]
+settings:
+  - name: username
+    type: text
+    label: Username
+    required: true
+  - name: password
+    type: password
+    label: Password
+    required: true
+  - name: pid
+    type: text
+    label: PID (PassID)
+    required: true
+search:
+  headers:
+    Accept: application/json
+    Authorization: "Bearer {{ .Token }}"
+  paths:
+    - path: api/v1/jackett/torrents
+      method: get
+      response:
+        type: json
+      inputs:
+        in: "1"
+        limit: "50"
+        search: "{{ .Keywords }}"
+  rows:
+    selector: data
+  fields:
+    file_name:
+      selector: file_name
+    title:
+      selector: file_name
+    size:
+      selector: file_size
+    seeders:
+      selector: seed
+    leechers:
+      selector: leech
+    date:
+      selector: created_at_iso
+    infohash:
+      selector: info_hash
+    download:
+      selector: download
+login:
+  path: api/v1/jackett/auth
+  method: POST
+  headers:
+    Accept: application/json
+    Content-Type: application/json
+  inputs:
+    username: "{{ .Config.username }}"
+    password: "{{ .Config.password }}"
+    pid: "{{ .Config.pid }}"
+  response:
+    tokenPath: token

@@ -1,0 +1,51 @@
+---
+# Definición propia para TransMule — autoría original, escrita a mano.
+# Indexer: AudioBook Bay (audiobookbay) — migrado del indexer C# de Jackett
+# (IndexerBase) a YAML Cardigann para el motor indexerr.
+# NOTA: este indexer NO tiene YAML oficial en Jackett (solo C#).
+# HTML público: lista → detalle (Info Hash) → magnet construido por el motor.
+# NOTA: los posts ofuscados (`div.post.re-ab` en base64) no se decodifican.
+id: audiobookbay
+name: AudioBook Bay
+description: AudioBook Bay (ABB) is a Public Torrent Tracker for AUDIOBOOKS
+language: en-US
+type: public
+encoding: UTF-8
+links:
+  - https://audiobookbay.is/
+caps:
+  categorymappings:
+    - {id: 1, cat: Audio/Audiobook, desc: "Audiobooks"}
+  modes:
+    search: [q]
+    book-search: [q]
+settings: []
+search:
+  paths:
+    - path: /
+      method: get
+      inputs:
+        s: "{{ .Keywords }}"
+        tt: "1"
+  rows:
+    selector: div.post:has(div[class="postTitle"])
+  fields:
+    title:
+      selector: div.postTitle
+      filters:
+        - name: re_replace
+          args: ["\\s+", " "]
+        - name: trim
+    download:
+      selector: div.postTitle h2 a
+      attribute: href
+      filters:
+        - name: re_replace
+          args: ["^/", ""]
+        - name: prepend
+          args: ["{{ .Config.sitelink }}"]
+download:
+  selectors:
+    - selector: td:contains("Info Hash:") ~ td
+      filters:
+        - name: trim

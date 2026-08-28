@@ -1,0 +1,88 @@
+---
+# Definición propia para TransMule — autoría original, escrita a mano.
+# Indexer: FileList (filelist) — migrado del indexer C# de Jackett
+# (IndexerBase) a YAML Cardigann para el motor indexerr.
+# NOTA: este indexer NO tiene YAML oficial en Jackett (solo C#).
+# API JSON con Basic auth (username:passkey en base64): api.php?action=...
+id: filelist
+name: FileList
+description: FileList is a Private Torrent Tracker. The best Romanian site.
+language: ro-RO
+type: private
+encoding: UTF-8
+links:
+  - https://filelist.io/
+caps:
+  categorymappings:
+    - {id: 24, cat: TV/Anime, desc: "Anime"}
+    - {id: 11, cat: Audio, desc: "Music"}
+    - {id: 29, cat: Books, desc: "Books"}
+    - {id: 30, cat: Other, desc: "Courses"}
+    - {id: 15, cat: TV, desc: "Cartoons"}
+    - {id: 18, cat: Other, desc: "Various"}
+    - {id: 16, cat: Books, desc: "Docs"}
+    - {id: 25, cat: Movies/3D, desc: "Movies 3D"}
+    - {id: 6, cat: Movies/UHD, desc: "Movies 4K"}
+    - {id: 26, cat: Movies/BluRay, desc: "Movies 4K BluRay"}
+    - {id: 20, cat: Movies/BluRay, desc: "Movies BluRay"}
+    - {id: 2, cat: Movies/DVD, desc: "Movies DVD"}
+    - {id: 3, cat: Movies/Foreign, desc: "Movies DVD-RO"}
+    - {id: 4, cat: Movies/HD, desc: "Movies HD"}
+    - {id: 19, cat: Movies/Foreign, desc: "Movies HD-RO"}
+    - {id: 1, cat: Movies/SD, desc: "Movies SD"}
+    - {id: 5, cat: Audio/Lossless, desc: "FLAC"}
+    - {id: 10, cat: Console, desc: "Games Console"}
+    - {id: 9, cat: PC/Games, desc: "Games PC"}
+    - {id: 31, cat: TV/Foreign, desc: "K-Drama"}
+    - {id: 17, cat: PC, desc: "Linux"}
+    - {id: 22, cat: PC/Mobile, desc: "Mobile"}
+    - {id: 8, cat: PC, desc: "Apps"}
+    - {id: 28, cat: TV/Foreign, desc: "RO Dubbed"}
+    - {id: 27, cat: TV/UHD, desc: "TV-Series 4K"}
+    - {id: 21, cat: TV/HD, desc: "TV-Series HD"}
+    - {id: 23, cat: TV/SD, desc: "TV-Series SD"}
+    - {id: 13, cat: TV/Sport, desc: "Sport"}
+    - {id: 12, cat: Audio/Video, desc: "Videoclips"}
+    - {id: 7, cat: XXX, desc: "XXX"}
+  modes:
+    search: [q]
+    tv-search: [q, season, ep]
+    movie-search: [q, imdbid]
+settings:
+  - name: username
+    type: text
+    label: Username
+    required: true
+  - name: passkey
+    type: password
+    label: Passkey
+    required: true
+search:
+  headers:
+    Authorization: "Basic {{ base64 (join \":\" (list .Config.username .Config.passkey)) }}"
+  paths:
+    - path: api.php
+      method: get
+      response:
+        type: json
+      inputs:
+        action: search-torrents
+        type: name
+        query: "{{ .Keywords }}"
+  rows:
+    selector: ""
+  fields:
+    torrentid:
+      selector: id
+    title:
+      selector: name
+    size:
+      selector: size
+    seeders:
+      selector: seeders
+    leechers:
+      selector: leechers
+    date:
+      selector: upload_date
+    download:
+      selector: download_link

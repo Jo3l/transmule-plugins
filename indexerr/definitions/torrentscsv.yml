@@ -1,0 +1,49 @@
+---
+# Definición propia para TransMule — autoría original, escrita a mano.
+# Indexer: Torrents.csv (torrentscsv) — migrado del indexer C# de Jackett
+# (IndexerBase) a YAML Cardigann para el motor indexerr.
+# NOTA: este indexer NO tiene YAML oficial en Jackett (solo C#).
+# API JSON pública: service/search?size=100&q=<query> — el magnet se
+# construye desde el infohash.
+id: torrentscsv
+name: Torrents.csv
+description: Torrents.csv is a self-hostable, open source torrent search engine and database
+language: en-US
+type: public
+encoding: UTF-8
+links:
+  - https://torrents-csv.com/
+legacylinks:
+  - https://torrents-csv.ml/
+caps:
+  categorymappings:
+    - {id: 1, cat: Other, desc: "Other"}
+  modes:
+    search: [q]
+    tv-search: [q, season, ep]
+    movie-search: [q]
+settings: []
+search:
+  paths:
+    - path: service/search
+      method: get
+      response:
+        type: json
+      inputs:
+        size: "100"
+        q: "{{ .Keywords }}"
+  rows:
+    selector: torrents
+  fields:
+    title:
+      selector: name
+    infohash:
+      selector: infohash
+    size:
+      selector: size_bytes
+    seeders:
+      selector: seeders
+    leechers:
+      selector: leechers
+    date:
+      selector: created_unix
