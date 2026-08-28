@@ -23,18 +23,10 @@ const CUSTOM_DEFS_BASE =
   "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/indexerr/definitions";
 const CUSTOM_DEFS_DIR = resolve("data", "cardigann-definitions-custom");
 
-// Los 7 trackers legacy que había antes de unificarlos en Indexerr.
-// El botón "Habilitar definiciones públicas" activa estas instancias
-// (ids de indexer en el catálogo Cardigann de Jackett).
-const LEGACY_TRACKERS = [
-  "1337x",
-  "eztv",
-  "nyaasi",
-  "thepiratebay",
-  "kickasstorrents-to",
-  "torrentkitty",
-  "yts",
-];
+// El botón "Habilitar definiciones públicas" activa una instancia por cada
+// definición `type: public` del catálogo (Jackett + propias). Se calcula a
+// partir del catálogo real (no una lista fija), así el botón hace algo útil
+// aunque el sync de Jackett no esté disponible (solo definiciones propias).
 
 // ─── Helpers de estado (ctx.storage) ────────────────────────────────────────
 function catalog() {
@@ -157,7 +149,7 @@ export default {
     capability: "cardigann",
     description:
       "Búsqueda de torrents unificada — definiciones de indexers estilo Jackett/Cardigann.",
-    version: "1.2.0",
+    version: "1.2.1",
     repository:
       "https://raw.githubusercontent.com/Jo3l/transmule-plugins/main/manifest.json",
   },
@@ -258,10 +250,10 @@ export default {
       const existing = new Set(instances().map((i) => i.tracker_id));
       const list = instances();
       let added = 0;
-      for (const id of LEGACY_TRACKERS) {
-        const d = cat.find((c) => c.id === id);
-        if (!d) continue; // tracker no disponible en el catálogo
-        if (existing.has(id)) continue; // ya configurado
+      for (const d of cat) {
+        if (d.type !== "public") continue; // solo trackers públicos
+        if (!d.id) continue;
+        if (existing.has(d.id)) continue; // ya configurado
         list.push({
           id: randomUUID(),
           tracker_id: d.id,
@@ -269,7 +261,7 @@ export default {
           enabled: true,
           config: {},
         });
-        existing.add(id);
+        existing.add(d.id);
         added++;
       }
       saveInstances(list);
