@@ -19,13 +19,21 @@ Upload any `.js` file via **Settings → Providers → Upload Plugin** — no se
 
 | File                                                     | ID                  | Name       | Type     | Description                                                 |
 | -------------------------------------------------------- | ------------------- | ---------- | -------- | ----------------------------------------------------------- |
-| [media/dontorrent-movies.js](media/dontorrent-movies.js) | `dontorrent-movies` | DonTorrent | `movies` | Spanish movie torrents from dontorrent.link                 |
-| [media/dontorrent-shows.js](media/dontorrent-shows.js)   | `dontorrent-shows`  | DonTorrent | `shows`  | Spanish series torrents from dontorrent.link                |
+| [media/dontorrent-movies.js](media/dontorrent-movies.js) | `dontorrent-movies` | DonTorrent (v1.3.0) | `movies` | Spanish movie torrents — dominio autodetectado, descarga vía PoW y paginación |
+| [media/dontorrent-shows.js](media/dontorrent-shows.js)   | `dontorrent-shows`  | DonTorrent (v1.2.0) | `shows`  | Spanish series torrents — dominio autodetectado, descarga vía PoW y paginación |
 | [media/torrentclaw-movies.js](media/torrentclaw-movies.js) | `torrentclaw-movies` | TorrentClaw | `movies` | Popular movies — 30+ sources, TrueSpec quality scores       |
 | [media/torrentclaw-shows.js](media/torrentclaw-shows.js)   | `torrentclaw-shows`  | TorrentClaw | `shows`  | Popular TV shows — 30+ sources, TrueSpec quality scores     |
 | [media/yts.js](media/yts.js)                             | `yts`               | YTS        | `movies` | Movie browse/search via YTS.mx with quality & genre filters |
 | [media/showrss.js](media/showrss.js)                     | `showrss`           | ShowRSS    | `shows`  | TV show torrents from your personal ShowRSS RSS feed        |
 | [media/archive-org.js](media/archive-org.js)             | `archive-org`       | Archive.org | `archive` | Search all content (movies, audio, books, software, images) — direct download |
+
+#### DonTorrent
+
+Los plugins `dontorrent-movies` / `dontorrent-shows` se adaptan solos a los dos cambios que más rompen este tipo de fuente:
+
+- **Dominio rotatorio.** El dominio vigente se resuelve desde la página oficial de enlaces ([privtr.ee/@DonTorrent](https://privtr.ee/@DonTorrent), bloque *Dominio Actual*) y se cachea 30 min. Cualquier URL que llegue por `params.url` —o guardada en las preferencias del usuario— conserva su ruta pero se reescribe al dominio vigente, así que un dominio caducado no rompe la búsqueda.
+- **Paginación y catálogo mezclado.** Cada listado se pide con el sufijo `/page/N` y el plugin informa de `hasMore` leyendo el nav de la web, así que los botones Anterior/Siguiente de TransMule funcionan. La página N de películas mezcla la página N de `/peliculas`, `/peliculas/hd` y `/peliculas/4K` (no se solapan entre sí, ~99 items en la primera página); la de series hace lo mismo con `/series` y `/series/hd`. Las secciones más cortas se retiran cuando se acaban en vez de repetir items. `/ultimos` (Estrenos) no está paginado por la web y se mapea al catálogo.
+- **Descargas con Proof-of-Work.** DonTorrent ya no publica enlaces `.torrent` en el HTML: cada botón `class="protected-download"` lleva `data-content-id`/`data-tabla`, y el fichero se obtiene resolviendo el PoW (SHA-256 con `difficulty` ceros) contra `/api_validate_pow.php`. Los episodios se resuelven con concurrencia limitada y se cachean.
 
 ### Torrent-search providers
 
